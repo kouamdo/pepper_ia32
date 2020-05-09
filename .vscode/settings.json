@@ -1,0 +1,9 @@
+{
+    "editor.formatOnSave": true,
+    "clang-format.executable": "/usr/bin/clang-format-10",
+    "C_Cpp.clang_format_style": "../.clang-format",
+    "C_Cpp.clang_format_fallbackStyle": "none",
+    "files.associations": {
+        "*.yaml": "home-assistant"
+    }
+}
