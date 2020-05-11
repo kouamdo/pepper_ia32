@@ -13,7 +13,6 @@ typedef long int64_t;
 typedef char int8_t;
 typedef short int16_t;
 
-typedef enum boolean { true = 0x1,
-                       false = 0x0 } bool;
+typedef enum boolean { true = 0x1 : 1, false = 0x0 : 1 } bool;
 
-#endif  // !TYPES_H
+#endif // !TYPES_H
