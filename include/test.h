@@ -50,16 +50,18 @@ uint8_t NMBER_TEST_CASE = 0;
                                     __TEST_CASE_RESULT__, __TEST_UNIT_RESULT__)
 ({
     TEST_UNIT(__TEST_CASE__, __TEST_UNIT__, __EXEC_UNIT_TEST__);
-    TEST_SUBSYSTEM[find_test_case(__TEST_CASE__)].tests_units[nmber_test].valid_test = {
-        __TEST_CASE_RESULT__, __TEST_UNIT_RESULT__};   \
+    TEST_SUBSYSTEM[find_test_case(__TEST_CASE__)]
+        .tests_units[find_unit_test(__TEST_UNIT__, __TEST_CASE__)]
+        .valid_test = {__TEST_CASE_RESULT__, __TEST_UNIT_RESULT__};   \
 })
 
 #define TEST_UNIT_THROWS_UNVALID_TEST(__TEST_CASE__, __TEST_UNIT__, __EXEC_UNIT_TEST__, \
                                       __TEST_CASE_RESULT__, __TEST_UNIT_RESULT__)
 ({
     TEST_UNIT(__TEST_CASE__, __TEST_UNIT__, __EXEC_UNIT_TEST__);
-    TEST_SUBSYSTEM[find_test_case(__TEST_CASE__)].tests_units[nmber_test].unvalid_test = {
-        __TEST_CASE_RESULT__, __TEST_UNIT_RESULT__};   \
+    TEST_SUBSYSTEM[find_test_case(__TEST_CASE__)]
+        .tests_units[find_unit_test(__TEST_UNIT__, __TEST_CASE__)]
+        .unvalid_test = {__TEST_CASE_RESULT__, __TEST_UNIT_RESULT__};   \
 })
 
 #define TEST_CASE(__TEST_CASE_NAME__)                                        \
@@ -67,10 +69,9 @@ uint8_t NMBER_TEST_CASE = 0;
         TEST_SUBSYSTEM[NMBER_TEST_CASE].test_case_name = __TEST_CASE_NAME__; \
         TEST_SUBSYSTEM[NMBER_TEST_CASE].nmber_test = 0;                      \
         NMBER_TEST_CASE++;                                                   \
-        \                                                                    \
     })
 
-uint8_t find_unit_test(char* unit_test, test_case_result test_case);
+uint8_t find_unit_test(char* unit_test, char *test_case);
 uint8_t find_test_case(char* test_case);
 
 #endif // !TEST_H
