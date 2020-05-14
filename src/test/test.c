@@ -30,7 +30,7 @@ void test_unit(char _test_case_[0xF], char _test_unit[0xF], void* test_function)
     if ((NMBER_TEST_CASE == 0) || (find_test_case(_test_case_) > NMBER_TEST_CASE) ||
         find_unit_test(_test_unit, _test_case_) >
             TEST_SUBSYSTEM[find_test_case(_test_case_)].nmber_test) // Check if the test cae exist
-        __asm__ __volatile__("hlt");
+        return;
 
     tmp = TEST_SUBSYSTEM[find_test_case(_test_case_)]; // Check the test case
     test_unit_result* tmp_test_unit;
@@ -65,7 +65,7 @@ void test_unit_throws_valid_test(char _test_case_[0xF],
     if ((TEST_SUBSYSTEM[find_test_case(_test_case_result)].nmber_test == 0) ||
         TEST_SUBSYSTEM[find_test_case(_test_case_result)].nmber_test <
             find_unit_test(_test_unit_result, _test_case_result)) // Check if the test case and test unit exist
-        __asm__ __volatile__("ret");
+        return;
 
     strcpy(TEST_SUBSYSTEM[find_test_case(_test_case_)]
                .tests_units[find_unit_test(_test_unit, _test_case_)]
@@ -92,7 +92,7 @@ void test_unit_throws_unvalid_test(char _test_case_[0xF],
     if ((TEST_SUBSYSTEM[find_test_case(_test_case_)].nmber_test == 0) ||
         TEST_SUBSYSTEM[find_test_case(_test_case_result)].nmber_test <
             find_unit_test(_test_unit_result, _test_case_result))
-        __asm__ __volatile__("ret");
+        return;
 
     strcpy(TEST_SUBSYSTEM[find_test_case(_test_case_)]
                .tests_units[find_unit_test(_test_unit, _test_case_)]
@@ -105,4 +105,12 @@ void test_unit_throws_unvalid_test(char _test_case_[0xF],
            _test_unit_result, strlen(_test_case_result));
 }
 
-// void test_case()
+void test_case(char test_case[0xF])
+{
+    if (find_test_case(test_case) < NMBER_TEST_CASE)
+        return;
+
+    strcpy(TEST_SUBSYSTEM[NMBER_TEST_CASE].test_case_name, test_case, strlen(test_case));
+    TEST_SUBSYSTEM[NMBER_TEST_CASE].nmber_test = 0;
+    NMBER_TEST_CASE++;
+}

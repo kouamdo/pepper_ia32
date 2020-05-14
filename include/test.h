@@ -33,44 +33,6 @@ typedef struct test_case_result {
 static test_case_result TEST_SUBSYSTEM[0XFF];
 static uint8_t NMBER_TEST_CASE = 0;
 
-// #define TEST_UNIT(__TEST_CASE__, __TEST_UNIT__, __EXEC_UNIT_TEST__)   \
-//     ({                                                                \
-//         \ test_case_result tmp;                                       \
-//         tmp = TEST_SUBSYSTEM[find_test_case(__TEST_CASE__)];          \
-//         test_unit_result tmp_test_unit = tmp.tests_units[nmber_test]; \
-//         tmp_test_unit.test_unit_name = __TEST_UNIT__;                 \
-//         tmp_test_unit.test_unit_code = (void*)__EXEC_UNIT_TEST__;     \
-//         tmp_test_unit.valid_test = {"", ""};                          \
-//         tmp_test_unit.unvalid_test = {"", ""};                        \
-//         tmp.tests_units[nmber_test] = tmp_test_unit;                  \
-//         tmp.nmber_test++;                                             \
-//         TEST_SUBSYSTEM[find_test_case(__TEST_CASE__)] = tmp;          \
-//     })
-
-// #define TEST_UNIT_THROWS_VALID_TEST(__TEST_CASE__, __TEST_UNIT__, __EXEC_UNIT_TEST__, \
-//                                     __TEST_CASE_RESULT__, __TEST_UNIT_RESULT__)({
-// TEST_UNIT(__TEST_CASE__, __TEST_UNIT__, __EXEC_UNIT_TEST__);
-// TEST_SUBSYSTEM[find_test_case(__TEST_CASE__)]
-//     .tests_units[find_unit_test(__TEST_UNIT__, __TEST_CASE__)]
-
-//     .valid_test = {__TEST_CASE_RESULT__, __TEST_UNIT_RESULT__};
-// })
-
-// #define TEST_UNIT_THROWS_UNVALID_TEST(__TEST_CASE__, __TEST_UNIT__, __EXEC_UNIT_TEST__, \
-//                                       __TEST_CASE_RESULT__, __TEST_UNIT_RESULT__)({ \
-//     TEST_UNIT(__TEST_CASE__, __TEST_UNIT__, __EXEC_UNIT_TEST__);    \
-//     TEST_SUBSYSTEM[find_test_case(__TEST_CASE__)]
-//         .tests_units[find_unit_test(__TEST_UNIT__, __TEST_CASE__)]
-//         .unvalid_test = {__TEST_CASE_RESULT__, __TEST_UNIT_RESULT__};
-// })
-
-// #define TEST_CASE(__TEST_CASE_NAME__)                                        \
-//     ({                                                                       \
-//         TEST_SUBSYSTEM[NMBER_TEST_CASE].test_case_name = __TEST_CASE_NAME__; \
-//         TEST_SUBSYSTEM[NMBER_TEST_CASE].nmber_test = 0;                      \
-//         NMBER_TEST_CASE++;                                                   \
-//     })
-
 uint8_t find_unit_test(char* unit_test, char* test_case);
 uint8_t find_test_case(char* test_case);
 
