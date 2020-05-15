@@ -34,7 +34,7 @@ static uint16_t find_unit_test(char* unit_test, char* test_case_name)
 
 void test_unit(char _test_case_[0xF], char _test_unit[0xF], void* test_function)
 {
-    if ((find_test_case(_test_case_) == (uint16_t)(-1)) &&
+    if ((find_test_case(_test_case_) == (uint16_t)(-1)) ||
         (find_unit_test(_test_unit, _test_case_) != (uint16_t)(-1))) // check if the test case exist
         return;
 
@@ -66,17 +66,13 @@ void test_unit_throws_valid_test(char _test_case_[0xF],
                                  void* function_result)
 {
     if ((find_test_case(_test_case_result) == (uint16_t)(-1)) &&
-        (find_unit_test(_test_unit_result, _test_case_result) != (uint16_t)(-1))) // check if the test case exist
+        (find_unit_test(_test_unit_result, _test_case_result) == (uint16_t)(-1))) // check if the test case exist
         return;
 
     // Call test unit
     test_unit(_test_case_, _test_unit, test_function);
 
     // Insert function result
-    if ((find_test_case(_test_case_result) == (uint16_t)(-1)) &&
-        (find_unit_test(_test_unit_result, _test_case_result) != (uint16_t)(-1))) // check if the test case exist
-        return;
-
     strcpy(TEST_SUBSYSTEM[find_test_case(_test_case_)]
                .tests_units[find_unit_test(_test_unit, _test_case_)]
                .valid_test.test_unit,
@@ -95,14 +91,14 @@ void test_unit_throws_unvalid_test(char _test_case_[0xF],
                                    char _test_unit_result[0xF],
                                    void* function_result)
 {
+    if ((find_test_case(_test_case_result) == (uint16_t)(-1)) &&
+        (find_unit_test(_test_unit_result, _test_case_result) == (uint16_t)(-1))) // check if the test case exist
+        return;
+
     // Call test unit
     test_unit(_test_case_, _test_unit, test_function);
 
     // Insert function result
-    if ((find_test_case(_test_case_result) == (uint16_t)(-1)) &&
-        (find_unit_test(_test_unit_result, _test_case_result) != (uint16_t)(-1))) // check if the test case exist
-        return;
-
     strcpy(TEST_SUBSYSTEM[find_test_case(_test_case_)]
                .tests_units[find_unit_test(_test_unit, _test_case_)]
                .unvalid_test.test_unit,
