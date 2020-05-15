@@ -3,6 +3,7 @@
 #include "include/init/io.h"
 #include "include/init/paging.h"
 #include "include/init/video.h"
+#include "include/test.h"
 
 unsigned int main()
 {
@@ -14,6 +15,11 @@ unsigned int main()
     kprintf(2, READY_COLOR, "Chargement des segments\n");
 
     init_idt();
+
+    test_case("Screen Test");
+
+    test_case("Gdt");
+    test_unit("Gdt", "Open Gdt", (void*)init_gdt);
 
     if (DetectPSE32bit & DetectPGE & DetectPAT & DetectMTRR & DetectMSR) {
         kprintf(2, READY_COLOR, "PSE 32bit , PAT, MTRRs and PGE detected \n");

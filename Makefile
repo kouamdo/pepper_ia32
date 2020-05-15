@@ -31,6 +31,7 @@ SOURCES_ASM := $(wildcard $(patsubst %,%/*.asm, $(SOURCEDIRS)))
 OBJECTS_ASM := $(SOURCES_ASM:.asm=.o)
 
 all: boot mixt disk
+	clear
 	qemu-system-i386 -fda disk.img -d cpu_reset -d int -serial file:serial.log
 
 mixt: k_main.o $(OBJECTS) $(OBJECTS_ASM)
@@ -38,7 +39,6 @@ mixt: k_main.o $(OBJECTS) $(OBJECTS_ASM)
 	@echo "$(OBJECTS)"
 	@echo "$(OBJECTS_ASM)"
 	$(LDFLAGS) k_main.o $(OBJECTS) $(OBJECTS_ASM) -o bin/kernel.bin
-	make debug
 
 %.o : %.c
 	@$(CC) -o $@ -c $< $(CFLAGS)
@@ -56,8 +56,20 @@ disk :
 	dd if=bin/boot.bin of=disk.img bs=512 conv=notrunc
 	dd if=bin/kernel.bin of=disk.img bs=512 seek=1 conv=notrunc
 
-debug: k_main.o $(OBJECTS) $(OBJECTS_ASM)
+debug_link_file: k_main.o $(OBJECTS) $(OBJECTS_ASM)
+	@echo "$(OBJECTS)"
+	@echo "$(OBJECTS_ASM)"
 	ld -m elf_i386 --oformat=elf32-i386 -Tlinker.ld k_main.o $(OBJECTS) $(OBJECTS_ASM) -o bin/kernel.elf
+
+debug:
+	make debug_link_file
+	qemu-system-i386 -fda disk.img -S -s &
+	gdb bin/kernel.elf  \
+        -ex 'target remote localhost:1234' \
+        -ex 'layout src' \
+        -ex 'layout reg' \
+        -ex 'break main' \
+-ex 'continue' 
 
 .PHONY: clean
 clean:

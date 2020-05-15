@@ -30,11 +30,8 @@ typedef struct test_case_result {
 
 } test_case_result;
 
-static test_case_result TEST_SUBSYSTEM[0XFF];
-static uint8_t NMBER_TEST_CASE = 0;
-
-uint8_t find_unit_test(char* unit_test, char* test_case);
-uint8_t find_test_case(char* test_case);
+static uint16_t find_unit_test(char* unit_test, char* test_case);
+static uint16_t find_test_case(char* test_case);
 
 void test_unit(char _test_case_[0xF], char _test_unit[0xF], void* test_function);
 void test_unit_throws_valid_test(char _test_case_[0xF],
@@ -50,4 +47,7 @@ void test_unit_throws_unvalid_test(char _test_case_[0xF],
                                    char _test_case_result[0xF],
                                    char _test_unit_result[0xF],
                                    void* function_result);
+
+void test_case(char test_case[0xF]);
+
 #endif // !TEST_H
