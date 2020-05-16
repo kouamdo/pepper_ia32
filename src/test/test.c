@@ -1,55 +1,63 @@
 #include "../../include/test.h"
-#include "../../include/string.h"
 #include <stddef.h>
+#include <string.h>
 
-static test_case_result TEST_SUBSYSTEM[0XFF];
-uint8_t NMBER_TEST_CASE = 0;
-
-static uint16_t find_test_case(char* test_case)
+uint16_t find_test_case(char* test_case)
 {
-    uint8_t i = 0;
     if (NMBER_TEST_CASE == 0)
-        return NMBER_TEST_CASE;
+        return 0;
+
+    uint8_t i = 0;
     for (i; i < NMBER_TEST_CASE; i++)
         if (strcmp(test_case, TEST_SUBSYSTEM[i].test_case_name))
             return i;
 
-    return (-1);
+    return (uint16_t)(-1);
 }
 
-static uint16_t find_unit_test(char* unit_test, char* test_case_name)
+uint16_t find_unit_test(char* unit_test, test_case_result test_case_)
 {
-    test_case_result test_case = TEST_SUBSYSTEM[find_test_case(test_case_name)];
-    uint8_t i = 0;
+    uint16_t i;
 
-    if (test_case.nmber_test == 0)
+    if (test_case_.nmber_test == 0)
         return 0;
 
-    for (i; i < test_case.nmber_test; i++)
-        if (strcmp(unit_test, test_case.tests_units[i].test_unit_name))
+    for (i = 0; i < test_case_.nmber_test; i++)
+        if (strcmp(test_case_.tests_units[i].test_unit_name, unit_test))
             return i;
 
-    return (-1);
+    return (uint16_t)(-1);
 }
 
 void test_unit(char _test_case_[0xF], char _test_unit[0xF], void* test_function)
 {
-    if ((find_test_case(_test_case_) == (uint16_t)(-1)) ||
-        (find_unit_test(_test_unit, _test_case_) != (uint16_t)(-1))) // check if the test case exist
+    uint16_t test_case_index = find_test_case(_test_case_);
+
+    if (NMBER_TEST_CASE == 0)
         return;
 
+    if (test_case_index == (uint16_t)(-1)) // If the test case doesn't exist
+        return;
+
+    uint16_t test_unit_index =
+        find_unit_test(_test_unit, TEST_SUBSYSTEM[test_case_index]);
+
+    if (TEST_SUBSYSTEM[test_case_index].nmber_test != 0) // Verify the zero value of test_unit_index
+        if (test_unit_index != (uint16_t)(-1))
+            return;
+
     test_case_result tmp;
-    tmp = TEST_SUBSYSTEM[find_test_case(_test_case_)]; // Check the test case
+    tmp = TEST_SUBSYSTEM[test_case_index]; // Check the test case
     test_unit_result* tmp_test_unit;
     tmp_test_unit = (&(tmp.tests_units[tmp.nmber_test])); // check the unit test a the end
 
     // Create the unit test
-    strcpy(tmp_test_unit->test_unit_name, _test_unit, strlen(_test_unit));
+    strcpy(tmp_test_unit->test_unit_name, _test_unit);
     tmp_test_unit->test_unit_code = test_function;
-    strcpy(tmp_test_unit->valid_test.test_case, "", strlen(""));
-    strcpy(tmp_test_unit->unvalid_test.test_case, "", strlen(""));
-    strcpy(tmp_test_unit->valid_test.test_unit, "", strlen(""));
-    strcpy(tmp_test_unit->unvalid_test.test_unit, "", strlen(""));
+    strcpy(tmp_test_unit->valid_test.test_case, "");
+    strcpy(tmp_test_unit->unvalid_test.test_case, "");
+    strcpy(tmp_test_unit->valid_test.test_unit, "");
+    strcpy(tmp_test_unit->unvalid_test.test_unit, "");
     tmp_test_unit->unvalid_test.throws_function_ = NULL;
     tmp_test_unit->valid_test.throws_function_ = NULL;
 
@@ -65,8 +73,21 @@ void test_unit_throws_valid_test(char _test_case_[0xF],
                                  char _test_unit_result[0xF],
                                  void* function_result)
 {
-    if ((find_test_case(_test_case_result) == (uint16_t)(-1)) &&
-        (find_unit_test(_test_unit_result, _test_case_result) == (uint16_t)(-1))) // check if the test case exist
+    uint16_t test_case_index = find_test_case(_test_case_result);
+
+    if (NMBER_TEST_CASE == 0)
+        return;
+
+    if (test_case_index == (uint16_t)(-1)) // If the test case doesn't exist
+        return;
+
+    uint16_t test_unit_index =
+        find_unit_test(_test_unit_result, TEST_SUBSYSTEM[test_case_index]);
+
+    if (TEST_SUBSYSTEM[test_case_index].nmber_test == 0)
+        return;
+
+    if (test_unit_index == (uint16_t)(-1))
         return;
 
     // Call test unit
@@ -74,14 +95,14 @@ void test_unit_throws_valid_test(char _test_case_[0xF],
 
     // Insert function result
     strcpy(TEST_SUBSYSTEM[find_test_case(_test_case_)]
-               .tests_units[find_unit_test(_test_unit, _test_case_)]
+               .tests_units[find_unit_test(_test_unit, TEST_SUBSYSTEM[test_case_index])]
                .valid_test.test_unit,
-           _test_unit_result, strlen(_test_unit_result));
+           _test_unit_result);
 
     strcpy(TEST_SUBSYSTEM[find_test_case(_test_case_)]
-               .tests_units[find_unit_test(_test_unit, _test_case_)]
+               .tests_units[find_unit_test(_test_unit, TEST_SUBSYSTEM[test_case_index])]
                .valid_test.test_case,
-           _test_unit_result, strlen(_test_case_result));
+           _test_unit_result);
 }
 
 void test_unit_throws_unvalid_test(char _test_case_[0xF],
@@ -91,8 +112,21 @@ void test_unit_throws_unvalid_test(char _test_case_[0xF],
                                    char _test_unit_result[0xF],
                                    void* function_result)
 {
-    if ((find_test_case(_test_case_result) == (uint16_t)(-1)) &&
-        (find_unit_test(_test_unit_result, _test_case_result) == (uint16_t)(-1))) // check if the test case exist
+    uint16_t test_case_index = find_test_case(_test_case_result);
+
+    if (NMBER_TEST_CASE == 0)
+        return;
+
+    if (test_case_index == (uint16_t)(-1)) // If the test case doesn't exist
+        return;
+
+    uint16_t test_unit_index =
+        find_unit_test(_test_unit_result, TEST_SUBSYSTEM[test_case_index]);
+
+    if (TEST_SUBSYSTEM[test_case_index].nmber_test == 0)
+        return;
+
+    if (test_unit_index == (uint16_t)(-1))
         return;
 
     // Call test unit
@@ -100,22 +134,23 @@ void test_unit_throws_unvalid_test(char _test_case_[0xF],
 
     // Insert function result
     strcpy(TEST_SUBSYSTEM[find_test_case(_test_case_)]
-               .tests_units[find_unit_test(_test_unit, _test_case_)]
+               .tests_units[find_unit_test(_test_unit, TEST_SUBSYSTEM[test_case_index])]
                .unvalid_test.test_unit,
-           _test_unit_result, strlen(_test_unit_result));
+           _test_unit_result);
 
     strcpy(TEST_SUBSYSTEM[find_test_case(_test_case_)]
-               .tests_units[find_unit_test(_test_unit, _test_case_)]
+               .tests_units[find_unit_test(_test_unit, TEST_SUBSYSTEM[test_case_index])]
                .unvalid_test.test_case,
-           _test_unit_result, strlen(_test_case_result));
+           _test_unit_result);
 }
 
 void test_case(char test_case[0xF])
 {
-    if (find_test_case(test_case) != (uint16_t)(-1)) // check if the test case exist
-        return;
+    if (find_test_case(test_case) != (uint16_t)(-1))
+        if (NMBER_TEST_CASE != 0)
+            return;
 
-    strcpy(TEST_SUBSYSTEM[NMBER_TEST_CASE].test_case_name, test_case, strlen(test_case));
+    strcpy(TEST_SUBSYSTEM[NMBER_TEST_CASE].test_case_name, test_case);
     TEST_SUBSYSTEM[NMBER_TEST_CASE].nmber_test = 0;
     NMBER_TEST_CASE++;
 }

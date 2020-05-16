@@ -7,7 +7,7 @@ bool strcmp(char* str1, char* str2)
 
     uint8_t i = 0;
 
-    while ((str1[i] == str2[i]) && (i <= strlen(str1)))
+    while (str1[i] == str2[i])
         i++;
 
     if (strlen(str1) == i)
@@ -16,18 +16,18 @@ bool strcmp(char* str1, char* str2)
 
 uint64_t strlen(char* str)
 {
-    uint64_t i = 0;
-    while (str[i] != '\0')
+    uint64_t i = 1;
+    while (str[i])
         i++;
 
     return i;
 }
 
-void* strcpy(char* dest, char* src, uint64_t size)
+void* strcpy(char* dest, char* src)
 {
     uint64_t i = 0;
 
-    while (src[i] != '\0') {
+    while (src[i]) {
         dest[i] = src[i];
         i++;
     }

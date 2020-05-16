@@ -28,10 +28,10 @@ typedef struct test_case_result {
 
     uint8_t nmber_test : 4; // Number of unit test
 
-} test_case_result;
+} __attribute__((packed)) test_case_result;
 
-static uint16_t find_unit_test(char* unit_test, char* test_case);
-static uint16_t find_test_case(char* test_case);
+uint16_t find_unit_test(char* unit_test, test_case_result test_case_);
+uint16_t find_test_case(char* test_case);
 
 void test_unit(char _test_case_[0xF], char _test_unit[0xF], void* test_function);
 void test_unit_throws_valid_test(char _test_case_[0xF],
@@ -49,5 +49,8 @@ void test_unit_throws_unvalid_test(char _test_case_[0xF],
                                    void* function_result);
 
 void test_case(char test_case[0xF]);
+
+static test_case_result TEST_SUBSYSTEM[0XFF];
+static uint16_t NMBER_TEST_CASE = 0;
 
 #endif // !TEST_H
