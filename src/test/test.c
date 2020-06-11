@@ -1,16 +1,20 @@
 #include "../../include/test.h"
+#include "../../include/string.h"
 #include <stddef.h>
-#include <string.h>
+#include <stdint.h>
+
+test_case_result TEST_SUBSYSTEM[0XFF];
+uint16_t NMBER_TEST_CASE = 0;
 
 uint16_t find_test_case(char* test_case)
 {
-    if (NMBER_TEST_CASE == 0)
+    if (NMBER_TEST_CASE)
         return 0;
 
     uint8_t i = 0;
     for (i; i < NMBER_TEST_CASE; i++)
-        if (strcmp(test_case, TEST_SUBSYSTEM[i].test_case_name))
-            return i;
+        if (_strcmp_(test_case, TEST_SUBSYSTEM[i].test_case_name) == true)
+            return (uint16_t)i;
 
     return (uint16_t)(-1);
 }
@@ -23,7 +27,7 @@ uint16_t find_unit_test(char* unit_test, test_case_result test_case_)
         return 0;
 
     for (i = 0; i < test_case_.nmber_test; i++)
-        if (strcmp(test_case_.tests_units[i].test_unit_name, unit_test))
+        if (_strcmp_(test_case_.tests_units[i].test_unit_name, unit_test) == true)
             return i;
 
     return (uint16_t)(-1);
@@ -52,12 +56,12 @@ void test_unit(char _test_case_[0xF], char _test_unit[0xF], void* test_function)
     tmp_test_unit = (&(tmp.tests_units[tmp.nmber_test])); // check the unit test a the end
 
     // Create the unit test
-    strcpy(tmp_test_unit->test_unit_name, _test_unit);
+    _strcpy_(tmp_test_unit->test_unit_name, _test_unit);
     tmp_test_unit->test_unit_code = test_function;
-    strcpy(tmp_test_unit->valid_test.test_case, "");
-    strcpy(tmp_test_unit->unvalid_test.test_case, "");
-    strcpy(tmp_test_unit->valid_test.test_unit, "");
-    strcpy(tmp_test_unit->unvalid_test.test_unit, "");
+    _strcpy_(tmp_test_unit->valid_test.test_case, "");
+    _strcpy_(tmp_test_unit->unvalid_test.test_case, "");
+    _strcpy_(tmp_test_unit->valid_test.test_unit, "");
+    _strcpy_(tmp_test_unit->unvalid_test.test_unit, "");
     tmp_test_unit->unvalid_test.throws_function_ = NULL;
     tmp_test_unit->valid_test.throws_function_ = NULL;
 
@@ -94,15 +98,15 @@ void test_unit_throws_valid_test(char _test_case_[0xF],
     test_unit(_test_case_, _test_unit, test_function);
 
     // Insert function result
-    strcpy(TEST_SUBSYSTEM[find_test_case(_test_case_)]
-               .tests_units[find_unit_test(_test_unit, TEST_SUBSYSTEM[test_case_index])]
-               .valid_test.test_unit,
-           _test_unit_result);
+    _strcpy_(TEST_SUBSYSTEM[find_test_case(_test_case_)]
+                 .tests_units[find_unit_test(_test_unit, TEST_SUBSYSTEM[test_case_index])]
+                 .valid_test.test_unit,
+             _test_unit_result);
 
-    strcpy(TEST_SUBSYSTEM[find_test_case(_test_case_)]
-               .tests_units[find_unit_test(_test_unit, TEST_SUBSYSTEM[test_case_index])]
-               .valid_test.test_case,
-           _test_unit_result);
+    _strcpy_(TEST_SUBSYSTEM[find_test_case(_test_case_)]
+                 .tests_units[find_unit_test(_test_unit, TEST_SUBSYSTEM[test_case_index])]
+                 .valid_test.test_case,
+             _test_unit_result);
 }
 
 void test_unit_throws_unvalid_test(char _test_case_[0xF],
@@ -133,24 +137,20 @@ void test_unit_throws_unvalid_test(char _test_case_[0xF],
     test_unit(_test_case_, _test_unit, test_function);
 
     // Insert function result
-    strcpy(TEST_SUBSYSTEM[find_test_case(_test_case_)]
-               .tests_units[find_unit_test(_test_unit, TEST_SUBSYSTEM[test_case_index])]
-               .unvalid_test.test_unit,
-           _test_unit_result);
+    _strcpy_(TEST_SUBSYSTEM[find_test_case(_test_case_)]
+                 .tests_units[find_unit_test(_test_unit, TEST_SUBSYSTEM[test_case_index])]
+                 .unvalid_test.test_unit,
+             _test_unit_result);
 
-    strcpy(TEST_SUBSYSTEM[find_test_case(_test_case_)]
-               .tests_units[find_unit_test(_test_unit, TEST_SUBSYSTEM[test_case_index])]
-               .unvalid_test.test_case,
-           _test_unit_result);
+    _strcpy_(TEST_SUBSYSTEM[find_test_case(_test_case_)]
+                 .tests_units[find_unit_test(_test_unit, TEST_SUBSYSTEM[test_case_index])]
+                 .unvalid_test.test_case,
+             _test_unit_result);
 }
 
-void test_case(char test_case[0xF])
+void test_case(char* _test_case_)
 {
-    if (find_test_case(test_case) != (uint16_t)(-1))
-        if (NMBER_TEST_CASE != 0)
-            return;
-
-    strcpy(TEST_SUBSYSTEM[NMBER_TEST_CASE].test_case_name, test_case);
+    _strcpy_(TEST_SUBSYSTEM[NMBER_TEST_CASE].test_case_name, _test_case_);
     TEST_SUBSYSTEM[NMBER_TEST_CASE].nmber_test = 0;
     NMBER_TEST_CASE++;
 }

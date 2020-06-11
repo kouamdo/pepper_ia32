@@ -12,8 +12,10 @@
 
 #include "i386types.h"
 
-bool strcmp(char* str1, char* str2); // Return 0 if st1 os the same as str2
-void* strcpy(char* dest, char* src); // Copies src into dest
-uint64_t strlen(char* str);          // Gives the length of str
+bool _strcmp_(char* str1, char* str2); // Return 0 if st1 os the same as str2
+void* _strcpy_(char* dest, char* src); // Copies src into dest
+uint8_t _strlen_(char* str);           // Gives the length of str
 
+void* memcpy(void* dest, const void* src, uint32_t size); // Copy specify number of bytes to null or any other value in the buffer
+void* memset(void* mem, void* data, uint32_t size);
 #endif // !_STRING_H

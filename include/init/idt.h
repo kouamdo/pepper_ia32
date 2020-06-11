@@ -23,11 +23,11 @@ extern void Paging_fault();
 
 // Descripteur de segment:
 struct IDT_entry {
-  unsigned short int offset_lowerbits;
-  unsigned short int selector;
-  unsigned char      zero;
-  unsigned char      type_attr;
-  unsigned short int offset_higherbits;
+    unsigned short int offset_lowerbits;
+    unsigned short int selector;
+    unsigned char zero;
+    unsigned char type_attr;
+    unsigned short int offset_higherbits;
 } __attribute__((__packed__));
 
 extern int irq0();
@@ -49,7 +49,11 @@ extern int irq15();
 
 #include "../i386types.h"
 
+#ifdef _IDT_H
+struct IDT_entry* IDT;
+#else
 struct IDT_entry IDT[IDTSIZE];
+#endif
 
 void set_idt(uint16_t selector, uint8_t type, uint64_t offset, uint16_t vector);
 

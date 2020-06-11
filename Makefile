@@ -32,6 +32,7 @@ OBJECTS_ASM := $(SOURCES_ASM:.asm=.o)
 
 all: boot mixt disk
 	clear
+	rm bin/kernel.bin
 	qemu-system-i386 -fda disk.img -d cpu_reset -d int -serial file:serial.log
 
 mixt: k_main.o $(OBJECTS) $(OBJECTS_ASM)
@@ -39,6 +40,8 @@ mixt: k_main.o $(OBJECTS) $(OBJECTS_ASM)
 	@echo "$(OBJECTS)"
 	@echo "$(OBJECTS_ASM)"
 	$(LDFLAGS) k_main.o $(OBJECTS) $(OBJECTS_ASM) -o bin/kernel.bin
+	rm $(OBJECTS)
+	rm $(OBJECTS_ASM)
 
 %.o : %.c
 	@$(CC) -o $@ -c $< $(CFLAGS)
@@ -60,6 +63,8 @@ debug_link_file: k_main.o $(OBJECTS) $(OBJECTS_ASM)
 	@echo "$(OBJECTS)"
 	@echo "$(OBJECTS_ASM)"
 	ld -m elf_i386 --oformat=elf32-i386 -Tlinker.ld k_main.o $(OBJECTS) $(OBJECTS_ASM) -o bin/kernel.elf
+	rm $(OBJECTS)
+	rm $(OBJECTS_ASM)
 
 debug:
 	make debug_link_file

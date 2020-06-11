@@ -3,6 +3,7 @@
 #include "include/init/io.h"
 #include "include/init/paging.h"
 #include "include/init/video.h"
+#include "include/string.h"
 #include "include/test.h"
 
 unsigned int main()
@@ -16,10 +17,11 @@ unsigned int main()
 
     init_idt();
 
-    test_case("Screen Test");
+    char test[] = {'t', 'e', 's', 't'};
+    char test_[] = "tesrt2";
 
-    test_case("Gdt");
-    test_unit("Gdt", "Open Gdt", (void*)init_gdt);
+    test_case(test);
+    test_case(test_);
 
     if (DetectPSE32bit & DetectPGE & DetectPAT & DetectMTRR & DetectMSR) {
         kprintf(2, READY_COLOR, "PSE 32bit , PAT, MTRRs and PGE detected \n");
@@ -43,7 +45,8 @@ unsigned int main()
         kprintf(2, READY_COLOR, "Enabling 32-bit paging\n");
 
         kprintf(3, READY_COLOR,
-                "Map kernel at physical address [%]\nInitialisation de 4Mo de "
+                "Map kernel at physical address [%]\nInitialisation de "
+                "4Mo de "
                 "memoire physique\n",
                 get_phyaddr((virtaddr_t)(main)));
 

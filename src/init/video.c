@@ -1,8 +1,9 @@
 #include "../../include/init/video.h"
 #include <stdarg.h>
 
-void volatile pepper_screen() {
-    volatile unsigned char *screen = (unsigned char *)(VIDEO_MEM);
+void volatile pepper_screen()
+{
+    volatile unsigned char* screen = (unsigned char*)(VIDEO_MEM);
     int i = 0;
     while (i != 160 * 24) {
         screen[i] = ' ';
@@ -11,8 +12,9 @@ void volatile pepper_screen() {
     }
 }
 
-void print_frequence(unsigned int freq) {
-    volatile unsigned char *pos = (unsigned char *)(VIDEO_MEM + 160 * 25 - 10);
+void print_frequence(unsigned int freq)
+{
+    volatile unsigned char* pos = (unsigned char*)(VIDEO_MEM + 160 * 25 - 10);
     unsigned char i = 10;
 
     while (i > 0) {
@@ -23,7 +25,8 @@ void print_frequence(unsigned int freq) {
     }
 }
 
-void kprintf(int nmber_param, ...) {
+void kprintf(int nmber_param, ...)
+{
     int val = 0;
     va_list ap;
     int i, tab_param[nmber_param];
@@ -35,9 +38,9 @@ void kprintf(int nmber_param, ...) {
     }
 
     unsigned char color = (unsigned char)tab_param[0];
-    char *string;
+    char* string;
 
-    string = (char *)tab_param[1];
+    string = (char*)tab_param[1];
 
     unsigned char j = 2;
 
@@ -45,7 +48,8 @@ void kprintf(int nmber_param, ...) {
         if (*string == '%') {
             print_address(color, tab_param[j]);
             j++;
-        } else
+        }
+        else
             putchar(color, *string);
 
         string++;
@@ -80,29 +84,33 @@ void kprintf(int nmber_param, ...) {
 //     }
 // }
 
-void volatile scrollup() {
-    unsigned volatile char *v = (unsigned char *)(VIDEO_MEM + 3840);
+void volatile scrollup()
+{
+    unsigned volatile char* v = (unsigned char*)(VIDEO_MEM + 3840);
     unsigned volatile char b[160];
     int i;
-    for (i = 0; i < 160; i++) b[i] = v[i];
+    for (i = 0; i < 160; i++)
+        b[i] = v[i];
 
     pepper_screen();
 
-    v = (unsigned char *)(VIDEO_MEM);
+    v = (unsigned char*)(VIDEO_MEM);
 
-    for (i = 0; i < 160; i++) v[i] = b[i];
+    for (i = 0; i < 160; i++)
+        v[i] = b[i];
 
     CURSOR_Y++;
 }
 
-void volatile putchar(unsigned char color, unsigned const char c) {
+void volatile putchar(unsigned char color, unsigned const char c)
+{
     if (c != 10) {
         if (CURSOR_Y > 25) {
             scrollup();
             CURSOR_X = 0;
             CURSOR_Y = 0;
         }
-        unsigned char *v = (unsigned char *)(VIDEO_MEM + CURSOR_X * 2 + 160 * CURSOR_Y);
+        unsigned char* v = (unsigned char*)(VIDEO_MEM + CURSOR_X * 2 + 160 * CURSOR_Y);
 
         if (c == 10 || CURSOR_X == 80) {
             CURSOR_X = 0;
@@ -110,7 +118,8 @@ void volatile putchar(unsigned char color, unsigned const char c) {
             *(v) = c;
             *(v + 1) = color;
             CURSOR_X++;
-        } else {
+        }
+        else {
             *(v) = c;
             *(v + 1) = color;
             CURSOR_X++;
@@ -123,7 +132,8 @@ void volatile putchar(unsigned char color, unsigned const char c) {
     }
 }
 
-void volatile print_address(unsigned char color, unsigned int adress__) {
+void volatile print_address(unsigned char color, unsigned int adress__)
+{
     char p[10] = {0};
 
     p[0] |= '0';
@@ -165,6 +175,7 @@ void volatile print_address(unsigned char color, unsigned int adress__) {
             else
                 p[10 - i] |= (char)(adress__ + 0x30);
         }
-        for (i = 0; i < 10; i++) putchar(color, p[i]);
+        for (i = 0; i < 10; i++)
+            putchar(color, p[i]);
     }
 }

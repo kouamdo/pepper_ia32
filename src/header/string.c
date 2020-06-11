@@ -1,36 +1,81 @@
 #include "../../include/string.h"
+#include <stddef.h>
 
-bool strcmp(char* str1, char* str2)
+bool _strcmp_(char* str1, char* str2)
 {
-    if (strlen(str2) != strlen(str1))
+    if (_strlen_(str2) != _strlen_(str1))
         return false;
+
+    while ((*str1 == *str2) && (*str1 != '\000')) {
+        str1++;
+        str2++;
+    }
+
+    if (*str1 == *str2)
+        return true;
+    else
+        return false;
+}
+
+uint8_t _strlen_(char* str)
+{
+    if (*str == '\000')
+        return 0;
 
     uint8_t i = 0;
 
-    while (str1[i] == str2[i])
+    while (*str != '\000') {
+        str++;
         i++;
-
-    if (strlen(str1) == i)
-        return true;
-}
-
-uint64_t strlen(char* str)
-{
-    uint64_t i = 1;
-    while (str[i])
-        i++;
+    }
 
     return i;
 }
 
-void* strcpy(char* dest, char* src)
+void* _strcpy_(char* dest, char* src)
 {
-    uint64_t i = 0;
+    if (dest == NULL)
+        return (void*)NULL;
 
-    while (src[i]) {
+    uint8_t i = 0;
+
+    while (src[i] != '\000') {
         dest[i] = src[i];
         i++;
     }
 
+    dest[i] = '\000';
+
     return (void*)dest;
+}
+
+void* memcpy(void* dest, const void* src, uint32_t size)
+{
+    char *_dest_, *_src_;
+
+    _dest_ = (char*)dest;
+    _src_ = (char*)src;
+
+    while (size) {
+        *(_dest_++) = *(_src_++);
+        size--;
+    }
+
+    return (void*)dest;
+}
+
+void* memset(void* mem, void* data, uint32_t size)
+{
+    if (!mem)
+        return NULL;
+
+    uint32_t* dest = mem;
+
+    while (size) {
+        *dest = (uint32_t)data;
+        size--;
+        dest += 4;
+    }
+
+    return (void*)mem;
 }

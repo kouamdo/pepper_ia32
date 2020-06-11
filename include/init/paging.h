@@ -14,22 +14,22 @@ typedef unsigned long physaddr_t;
 
 typedef unsigned int virtaddr_t;
 
-#define PAGE_PRESENT(x) (x)       // Page present in table or directory
-#define PAGE_READ_WRITE (1 << 1)  // Page read or write in table or directory
-#define PAGE_READ_ONLY (0 << 1)   // Page read only
-#define PAGE_USER_SUPERVISOR (1 << 2)      // Access for all
-#define PAGE_SUPERVISOR (0 << 2)           // Acces only by supervisor
-#define PAGE_WRITE_THROUGH (1 << 3)        // Write through the page
-#define PAGE_WRITE_BACK (0 << 3)           // Write back the page
-#define PAGE_CACHE_DISABLED(x) ((x) << 4)  // Page will not be cached
-#define PAGE_ACCESSED(x) ((x) << 5)        // Page accessed
-#define PAGE_SIZE_4KiB (0 << 6)            // Page for 4Kib
-#define PAGE_SIZE_4MiB (1 << 6)            // Page for 4Mib
-#define PAGE_DIRTY(x) ((x) << 6)           //  Page with dirty flag
+#define PAGE_PRESENT(x) (x)      // Page present in table or directory
+#define PAGE_READ_WRITE (1 << 1) // Page read or write in table or directory
+#define PAGE_READ_ONLY (0 << 1)  // Page read only
+#define PAGE_USER_SUPERVISOR (1 << 2)     // Access for all
+#define PAGE_SUPERVISOR (0 << 2)          // Acces only by supervisor
+#define PAGE_WRITE_THROUGH (1 << 3)       // Write through the page
+#define PAGE_WRITE_BACK (0 << 3)          // Write back the page
+#define PAGE_CACHE_DISABLED(x) ((x) << 4) // Page will not be cached
+#define PAGE_ACCESSED(x) ((x) << 5)       // Page accessed
+#define PAGE_SIZE_4KiB (0 << 6)           // Page for 4Kib
+#define PAGE_SIZE_4MiB (1 << 6)           // Page for 4Mib
+#define PAGE_DIRTY(x) ((x) << 6)          //  Page with dirty flag
 #define PAGE_GLOBAL(x) ((x) << 7)
 
 #define PAGE_VALID \
-  (PAGE_ACCESSED(1) | PAGE_READ_WRITE | PAGE_PRESENT(1) | PAGE_SUPERVISOR)
+    (PAGE_ACCESSED(1) | PAGE_READ_WRITE | PAGE_PRESENT(1) | PAGE_SUPERVISOR)
 
 #include "../i386types.h"
 
@@ -50,8 +50,7 @@ extern void _EnablingPaging_();
     Elle renvoie l'adresse physique si la page existe
     SI la page n'existe pas , on lui attribuera un flag au choix
 */
-physaddr_t map_page(virtaddr_t virtual_address, uint16_t flag_directory,
-                    uint16_t flag_table);
+physaddr_t map_page(virtaddr_t virtual_address, uint16_t flag_directory, uint16_t flag_table);
 
 // Elle permet de détruuire une page
 void unmap_page(virtaddr_t virtual_address);
