@@ -3,11 +3,22 @@
 #include "include/init/io.h"
 #include "include/init/paging.h"
 #include "include/init/video.h"
-#include "include/string.h"
 #include "include/test.h"
+// warning: Source file is more recent than executable.
+
+extern char __bss_start, __bss_end;
 
 unsigned int main()
 {
+    char* i;
+
+    i = &__bss_start;
+
+    while (i != &__bss_end) {
+        *i = 0;
+        i++;
+    }
+
     pepper_screen();
     cli;
 
@@ -17,11 +28,11 @@ unsigned int main()
 
     init_idt();
 
-    char test[] = {'t', 'e', 's', 't'};
-    char test_[] = "tesrt2";
+    create_test_case("First_test", "Fist test case");
+    create_test_case("Second_test", "Second test case");
+    create_test_case("third_test", "third test case");
 
-    test_case(test);
-    test_case(test_);
+    create_test_unit("Second_test", "First_unit_test", "first unit test");
 
     if (DetectPSE32bit & DetectPGE & DetectPAT & DetectMTRR & DetectMSR) {
         kprintf(2, READY_COLOR, "PSE 32bit , PAT, MTRRs and PGE detected \n");

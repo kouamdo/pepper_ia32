@@ -1,9 +1,12 @@
 #include "../../include/init/video.h"
 #include <stdarg.h>
 
+static int CURSOR_Y = 0;
+static int CURSOR_X = 0;
+
 void volatile pepper_screen()
 {
-    volatile unsigned char* screen = (unsigned char*)(VIDEO_MEM);
+    unsigned char* screen = (unsigned char*)(VIDEO_MEM);
     int i = 0;
     while (i != 160 * 24) {
         screen[i] = ' ';
@@ -12,9 +15,9 @@ void volatile pepper_screen()
     }
 }
 
-void print_frequence(unsigned int freq)
+void volatile print_frequence(unsigned int freq)
 {
-    volatile unsigned char* pos = (unsigned char*)(VIDEO_MEM + 160 * 25 - 10);
+    unsigned char* pos = (unsigned char*)(VIDEO_MEM + 160 * 25 - 10);
     unsigned char i = 10;
 
     while (i > 0) {
@@ -25,7 +28,7 @@ void print_frequence(unsigned int freq)
     }
 }
 
-void kprintf(int nmber_param, ...)
+void volatile kprintf(int nmber_param, ...)
 {
     int val = 0;
     va_list ap;
@@ -58,14 +61,14 @@ void kprintf(int nmber_param, ...)
     va_end(ap);
 }
 
-// void volatile write_string(unsigned char colour, const char string[40]) {
+// void volatile  write_string(unsigned char colour, const char string[40]) {
 //     if (CURSOR_Y >= 25) {
 //         scrollup();
 //         CURSOR_X = 0;
 //         CURSOR_Y = 0;
 //     }
 
-//     volatile unsigned char *vid;
+//      unsigned char *vid;
 
 //     while (*string != 0) {
 //         vid = (unsigned char *)(VIDEO_MEM + 160 * CURSOR_Y + 2 * CURSOR_X);
@@ -86,8 +89,8 @@ void kprintf(int nmber_param, ...)
 
 void volatile scrollup()
 {
-    unsigned volatile char* v = (unsigned char*)(VIDEO_MEM + 3840);
-    unsigned volatile char b[160];
+    unsigned char* v = (unsigned char*)(VIDEO_MEM + 3840);
+    unsigned char b[160];
     int i;
     for (i = 0; i < 160; i++)
         b[i] = v[i];
