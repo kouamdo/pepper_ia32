@@ -1,4 +1,4 @@
-#ifndef TEST_H
+#ifdef TEST_H
 
 #define TEST_H
 
@@ -39,5 +39,25 @@ void create_test_case(char* __test_case__, char* message);
 
 // Create simple test unit of one test case
 void create_test_unit(char* __test_case__, char* __test_unit__, void* _func_, char* message);
+
+// Call unit test if test has lost
+void __throw_unvalid_test__(char* __test_case__,
+                            char* __test_unit__,
+                            char* __test_case_throws,
+                            char* __test_unit_throws);
+
+// Call unit test if test has done a good job
+void __throw_valid_test__(char* __test_case__,
+                          char* __test_unit__,
+                          char* __test_case_throws,
+                          char* __test_unit_throws);
+#ifdef TEST_MM
+
+#define TEST_UNIT(test_case, test_unit, message, func) \
+    create_test_unit(test_case, test_unit, message, func)
+
+#define TEST_CASE (test_case, message) create_test_case(test_case, message)
+
+#endif // TEST_MM
 
 #endif // !TEST_H

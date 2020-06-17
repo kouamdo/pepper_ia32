@@ -1,3 +1,4 @@
+#define TEST_H
 #include "../../include/test.h"
 #include "../../include/string.h"
 #include <stddef.h>
@@ -72,7 +73,7 @@ void create_test_unit(char* __test_case__, char* __test_unit__, void* _func_, ch
     }
 }
 
-void __insert_valid_test__(char* __test_case__, char* __test_unit__, char* __test_case, char* __test_unit)
+void __throw_valid_test__(char* __test_case__, char* __test_unit__, char* __test_case, char* __test_unit)
 {
     test_unit_result *__ptr_test_unit__ = __test_unit__handler(__test_case__, __test_unit__),
                      *__ptr_test_unit_throws__ =
@@ -85,7 +86,7 @@ void __insert_valid_test__(char* __test_case__, char* __test_unit__, char* __tes
         return;
 }
 
-void __insert_unvalid_test__(char* __test_case__, char* __test_unit__, char* __test_case, char* __test_unit)
+void __throw_unvalid_test__(char* __test_case__, char* __test_unit__, char* __test_case, char* __test_unit)
 {
     test_unit_result *__ptr_test_unit__ = __test_unit__handler(__test_case__, __test_unit__),
                      *__ptr_test_unit_throws__ =

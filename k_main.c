@@ -3,7 +3,6 @@
 #include "include/init/io.h"
 #include "include/init/paging.h"
 #include "include/init/video.h"
-#include "include/test.h"
 // warning: Source file is more recent than executable.
 
 extern char __bss_start, __bss_end;
@@ -27,10 +26,6 @@ unsigned int main()
     kprintf(2, READY_COLOR, "Chargement des segments\n");
 
     init_idt();
-
-    create_test_case("First_test", "Fist test case");
-    create_test_case("Second_test", "Second test case");
-    create_test_case("third_test", "third test case");
 
     create_test_unit("Second_test", "First_unit_test", "first unit test");
 
