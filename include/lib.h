@@ -42,4 +42,16 @@
                              "d"((uint32_t)_data_[1]), "c"(MSRinput)); \
     })
 
+extern char __bss_start, __bss_end;
+
+#define CLEAR_BSS_SECTION         \
+    ({                            \
+        char* i;                  \
+        i = &__bss_start;         \
+        while (i != &__bss_end) { \
+            *i = 0;               \
+            i++;                  \
+        }                         \
+    })
+
 #endif // !LIB_h

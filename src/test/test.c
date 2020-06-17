@@ -85,7 +85,10 @@ void __insert_throw_valid_test__(char* __test_case__, char* __test_unit__, char*
         return;
 }
 
-void __nsert_throw_unvalid_test__(char* __test_case__, char* __test_unit__, char* __test_case, char* __test_unit)
+void __insert_throw_unvalid_test__(char* __test_case__,
+                                   char* __test_unit__,
+                                   char* __test_case,
+                                   char* __test_unit)
 {
     test_unit_result *__ptr_test_unit__ = __test_unit__handler(__test_case__, __test_unit__),
                      *__ptr_test_unit_throws__ =

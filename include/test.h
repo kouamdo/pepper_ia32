@@ -60,11 +60,11 @@ void __insert_throw_valid_test__(char* __test_case__,
 
 #define THROW_VALID_TEST                                     \
     (test_case, test_unit, test_case_throw, test_unit_throw) \
-        __throw_valid_test__(test_case, test_unit, test_case_throw, test_unit_throw)
+        __insert_throw_valid_test__(test_case, test_unit, test_case_throw, test_unit_throw)
 
 #define THROW_UNVALID_TEST                                   \
     (test_case, test_unit, test_case_throw, test_unit_throw) \
-        __throw_unvalid_test__(test_case, test_unit, test_case_throw, test_unit_throw)
+        __insert_throw_unvalid_test__(test_case, test_unit, test_case_throw, test_unit_throw)
 
 #endif // TEST_MM
 

@@ -3,20 +3,12 @@
 #include "include/init/io.h"
 #include "include/init/paging.h"
 #include "include/init/video.h"
+#include "include/lib.h"
 // warning: Source file is more recent than executable.
-
-extern char __bss_start, __bss_end;
 
 unsigned int main()
 {
-    char* i;
-
-    i = &__bss_start;
-
-    while (i != &__bss_end) {
-        *i = 0;
-        i++;
-    }
+    CLEAR_BSS_SECTION;
 
     pepper_screen();
     cli;
