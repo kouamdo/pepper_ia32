@@ -6,12 +6,12 @@
 
 // Test Unit Data Structure
 typedef struct test_unit_result {
-    bool passed;                // 0 if the test was failed
-    char test_unit_name[0xF];   // Unit test name
-    char test_unit_message[30]; // Unit test message
-    void* test_unit_function;   // Code of test unit
-    char valid_test[0xF];       // Run test if this test was succed
-    char unvalid_test[0xF];     // Run test if this test was failed
+    bool passed;                    // 0 if the test was failed
+    char test_unit_name[0xF];       // Unit test name
+    char test_unit_message[30];     // Unit test message
+    void* test_unit_function;       // Code of test unit
+    test_unit_result* valid_test;   // Run test if this test was succed
+    test_unit_result* unvalid_test; // Run test if this test was failed
 } __attribute__((packed)) test_unit_result;
 
 // Test Case Data Structure
@@ -38,6 +38,6 @@ test_unit_result* __test_unit__handler(char* __test_case__, char* __test_unit__)
 void create_test_case(char* __test_case__, char* message);
 
 // Create simple test unit of one test case
-void create_test_unit(char* __test_case__, char* __test_unit__, char* message);
+void create_test_unit(char* __test_case__, char* __test_unit__, void* _func_, char* message);
 
 #endif // !TEST_H

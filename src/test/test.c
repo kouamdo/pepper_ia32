@@ -55,7 +55,7 @@ void create_test_case(char* __test_case__, char* message)
     }
 }
 
-void create_test_unit(char* __test_case__, char* __test_unit__, char* message)
+void create_test_unit(char* __test_case__, char* __test_unit__, void* _func_, char* message)
 {
     test_unit_result* __ptr_test_unit__ = __test_unit__handler(__test_case__, __test_unit__);
     test_case_result* __ptr_test_case__ = __test_case__handler(__test_case__);
@@ -65,6 +65,35 @@ void create_test_unit(char* __test_case__, char* __test_unit__, char* message)
                  __test_unit__);
         _strcpy_(__ptr_test_case__->tests_units[__ptr_test_case__->nmber_test].test_unit_message,
                  message);
+
+        __ptr_test_case__->tests_units[__ptr_test_case__->nmber_test].test_unit_function = _func_;
+
         __ptr_test_case__->nmber_test++;
     }
+}
+
+void __insert_valid_test__(char* __test_case__, char* __test_unit__, char* __test_case, char* __test_unit)
+{
+    test_unit_result *__ptr_test_unit__ = __test_unit__handler(__test_case__, __test_unit__),
+                     *__ptr_test_unit_throws__ =
+                         __test_unit__handler(__test_case, __test_unit);
+
+    if (__ptr_test_unit__ && __ptr_test_unit_throws__)
+        __ptr_test_unit__->valid_test = __ptr_test_unit_throws__;
+
+    else
+        return;
+}
+
+void __insert_unvalid_test__(char* __test_case__, char* __test_unit__, char* __test_case, char* __test_unit)
+{
+    test_unit_result *__ptr_test_unit__ = __test_unit__handler(__test_case__, __test_unit__),
+                     *__ptr_test_unit_throws__ =
+                         __test_unit__handler(__test_case, __test_unit);
+
+    if (__ptr_test_unit__ && __ptr_test_unit_throws__)
+        __ptr_test_unit__->unvalid_test = __ptr_test_unit_throws__;
+
+    else
+        return;
 }
