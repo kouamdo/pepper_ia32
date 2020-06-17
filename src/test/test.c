@@ -2,7 +2,6 @@
 #include "../../include/test.h"
 #include "../../include/string.h"
 #include <stddef.h>
-#include <stdint.h>
 
 static test_case_result test_table_[0XFF];
 static int nmber_test_ = 0;
@@ -73,7 +72,7 @@ void create_test_unit(char* __test_case__, char* __test_unit__, void* _func_, ch
     }
 }
 
-void __throw_valid_test__(char* __test_case__, char* __test_unit__, char* __test_case, char* __test_unit)
+void __insert_throw_valid_test__(char* __test_case__, char* __test_unit__, char* __test_case, char* __test_unit)
 {
     test_unit_result *__ptr_test_unit__ = __test_unit__handler(__test_case__, __test_unit__),
                      *__ptr_test_unit_throws__ =
@@ -86,7 +85,7 @@ void __throw_valid_test__(char* __test_case__, char* __test_unit__, char* __test
         return;
 }
 
-void __throw_unvalid_test__(char* __test_case__, char* __test_unit__, char* __test_case, char* __test_unit)
+void __nsert_throw_unvalid_test__(char* __test_case__, char* __test_unit__, char* __test_case, char* __test_unit)
 {
     test_unit_result *__ptr_test_unit__ = __test_unit__handler(__test_case__, __test_unit__),
                      *__ptr_test_unit_throws__ =

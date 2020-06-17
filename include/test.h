@@ -6,12 +6,12 @@
 
 // Test Unit Data Structure
 typedef struct test_unit_result {
-    bool passed;                    // 0 if the test was failed
-    char test_unit_name[0xF];       // Unit test name
-    char test_unit_message[30];     // Unit test message
-    void* test_unit_function;       // Code of test unit
-    test_unit_result* valid_test;   // Run test if this test was succed
-    test_unit_result* unvalid_test; // Run test if this test was failed
+    bool passed;                           // 0 if the test was failed
+    char test_unit_name[0xF];              // Unit test name
+    char test_unit_message[30];            // Unit test message
+    void* test_unit_function;              // Code of test unit
+    struct test_unit_result* valid_test;   // Run test if this test was succed
+    struct test_unit_result* unvalid_test; // Run test if this test was failed
 } __attribute__((packed)) test_unit_result;
 
 // Test Case Data Structure
@@ -41,22 +41,30 @@ void create_test_case(char* __test_case__, char* message);
 void create_test_unit(char* __test_case__, char* __test_unit__, void* _func_, char* message);
 
 // Call unit test if test has lost
-void __throw_unvalid_test__(char* __test_case__,
-                            char* __test_unit__,
-                            char* __test_case_throws,
-                            char* __test_unit_throws);
+void __insert_throw_unvalid_test__(char* __test_case__,
+                                   char* __test_unit__,
+                                   char* __test_case_throws,
+                                   char* __test_unit_throws);
 
 // Call unit test if test has done a good job
-void __throw_valid_test__(char* __test_case__,
-                          char* __test_unit__,
-                          char* __test_case_throws,
-                          char* __test_unit_throws);
-#ifdef TEST_MM
+void __insert_throw_valid_test__(char* __test_case__,
+                                 char* __test_unit__,
+                                 char* __test_case_throws,
+                                 char* __test_unit_throws);
+#ifdef TEST_M
 
 #define TEST_UNIT(test_case, test_unit, message, func) \
     create_test_unit(test_case, test_unit, message, func)
 
 #define TEST_CASE (test_case, message) create_test_case(test_case, message)
+
+#define THROW_VALID_TEST                                     \
+    (test_case, test_unit, test_case_throw, test_unit_throw) \
+        __throw_valid_test__(test_case, test_unit, test_case_throw, test_unit_throw)
+
+#define THROW_UNVALID_TEST                                   \
+    (test_case, test_unit, test_case_throw, test_unit_throw) \
+        __throw_unvalid_test__(test_case, test_unit, test_case_throw, test_unit_throw)
 
 #endif // TEST_MM
 

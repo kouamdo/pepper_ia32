@@ -27,8 +27,6 @@ unsigned int main()
 
     init_idt();
 
-    create_test_unit("Second_test", "First_unit_test", "first unit test");
-
     if (DetectPSE32bit & DetectPGE & DetectPAT & DetectMTRR & DetectMSR) {
         kprintf(2, READY_COLOR, "PSE 32bit , PAT, MTRRs and PGE detected \n");
 
