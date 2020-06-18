@@ -43,6 +43,8 @@
     })
 
 extern char __bss_start, __bss_end;
+extern char __test_section__code_start, __test_section__code_end;
+extern char __test_section__data_start, __test_section__data_end;
 
 #define CLEAR_BSS_SECTION         \
     ({                            \
@@ -52,6 +54,26 @@ extern char __bss_start, __bss_end;
             *i = 0;               \
             i++;                  \
         }                         \
+    })
+
+#define CLEAR_TEST_CODE                          \
+    ({                                           \
+        char* i;                                 \
+        i = &__test_section__code_start;         \
+        while (i != &__test_section__code_end) { \
+            *i = 0;                              \
+            i++;                                 \
+        }                                        \
+    })
+
+#define CLEAR_TEST_DATA                          \
+    ({                                           \
+        char* i;                                 \
+        i = &__test_section__data_start;         \
+        while (i != &__test_section__data_end) { \
+            *i = 0;                              \
+            i++;                                 \
+        }                                        \
     })
 
 #endif // !LIB_h

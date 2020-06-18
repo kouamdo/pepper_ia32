@@ -18,5 +18,19 @@ SECTIONS
         __bss_end = .;
     }
 
+    .test_section__code :
+    {
+        __test_section__code_start = .;
+        *(.test_section__code)
+        __test_section__code_end = .;
+    }
+
+    .test_section__data :
+    {
+        __test_section__data_start = .;
+        *(.test_section__data)
+        __test_section__data_end = .;
+    }
+
     end = .; _end = .; __end = .;
 }

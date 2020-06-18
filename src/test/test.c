@@ -3,7 +3,10 @@
 #include "../../include/string.h"
 #include <stddef.h>
 
-static test_case_result test_table_[0XFF];
+extern test_case_result __test_section__data_start;
+
+__test_frame__data__ test_case_result* test_table_ = &__test_section__data_start;
+
 static int nmber_test_ = 0;
 
 test_case_result* __test_case__handler(char* __test_case__)

@@ -4,6 +4,8 @@
 
 #include "i386types.h"
 
+#define __test_frame__code__ __attribute__((section(".test_section__code")))
+#define __test_frame__data__ __attribute__((section(".test_section__data")))
 // Test Unit Data Structure
 typedef struct test_unit_result {
     bool passed;                           // 0 if the test was failed
@@ -51,21 +53,12 @@ void __insert_throw_valid_test__(char* __test_case__,
                                  char* __test_unit__,
                                  char* __test_case_throws,
                                  char* __test_unit_throws);
+
 #ifdef TEST_M
+#define TEST_CASE(var, mem) \
+    __test_frame__data__ struct test_case_result var = mem;
 
-#define TEST_UNIT(test_case, test_unit, message, func) \
-    create_test_unit(test_case, test_unit, message, func)
-
-#define TEST_CASE (test_case, message) create_test_case(test_case, message)
-
-#define THROW_VALID_TEST                                     \
-    (test_case, test_unit, test_case_throw, test_unit_throw) \
-        __insert_throw_valid_test__(test_case, test_unit, test_case_throw, test_unit_throw)
-
-#define THROW_UNVALID_TEST                                   \
-    (test_case, test_unit, test_case_throw, test_unit_throw) \
-        __insert_throw_unvalid_test__(test_case, test_unit, test_case_throw, test_unit_throw)
-
-#endif // TEST_MM
+#define TEST_UNIT_FUNC(func) __test_frame__code__ void func()
+#endif // TEST_M
 
 #endif // !TEST_H

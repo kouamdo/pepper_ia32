@@ -82,15 +82,15 @@ void init_gdt(void)
     /* initialisation des descripteurs de segment */
     init_gdt_desc(0x0, 0x0, 0x0, 0x0, &kgdt[0]);
     // Configuration code, noyau, pile système
-    init_gdt_desc(0x0, 0xFFFFFFFF,
+    init_gdt_desc(0x0, 0xFFFFFF,
                   SEG_CODE_E_R_A | SEG_DESCTYPE(1) | SEG_PRIV(0) | SEG_PRES(1),
                   0x0D, &kgdt[1]); /* code */
 
-    init_gdt_desc(0x0, 0xFFFFFFFF,
+    init_gdt_desc(0x0, 0xFFFFFF,
                   SEG_DATA_R_W_A | SEG_DESCTYPE(1) | SEG_PRIV(0) | SEG_PRES(1),
                   0x0D, &kgdt[2]); /* data */
 
-    init_gdt_desc(0x0, 0xFFFFFFFF,
+    init_gdt_desc(0x0, 0xFFFFFF,
                   SEG_DATA_R_W_EX_A | SEG_DESCTYPE(1) | SEG_PRIV(0) | SEG_PRES(1),
                   0x0D, &kgdt[3]); /*Pour la pile*/
 

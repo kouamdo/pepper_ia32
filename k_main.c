@@ -10,6 +10,10 @@ unsigned int main()
 {
     CLEAR_BSS_SECTION;
 
+    CLEAR_TEST_CODE;
+
+    CLEAR_TEST_DATA;
+
     pepper_screen();
     cli;
 
@@ -52,5 +56,6 @@ unsigned int main()
     sti;
     while (1)
         ;
+
     return 0;
 }
