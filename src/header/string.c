@@ -22,7 +22,7 @@ uint8_t _strlen_(char* str)
     if (*str == '\000')
         return 0;
 
-    uint8_t i = 0;
+    uint8_t i = 1;
 
     while (*str != '\000') {
         str++;
@@ -78,4 +78,25 @@ void* memset(void* mem, void* data, uint32_t size)
     }
 
     return (void*)mem;
+}
+
+bool _memcmp_(void* src_1, void* src_2, uint32_t size)
+{
+    char* mem_1 = (char*)src_1;
+
+    char* mem_2 = (char*)src_2;
+
+    uint32_t i = 0;
+
+    while (i < size && *mem_1 == *mem_2) {
+        i++;
+        mem_1++;
+        mem_2++;
+    }
+
+    if (i == size)
+        return true;
+
+    else
+        return false;
 }

@@ -1,10 +1,15 @@
+#define TEST_H
 #include "include/init/gdt.h"
 #include "include/init/idt.h"
 #include "include/init/io.h"
 #include "include/init/paging.h"
 #include "include/init/video.h"
 #include "include/lib.h"
+#include "include/test.h"
 // warning: Source file is more recent than executable.
+
+extern __test_frame__data__ test_case_result __gdt_testing__;
+int i = 0xFF5;
 
 unsigned int main()
 {
@@ -18,6 +23,8 @@ unsigned int main()
     cli;
 
     init_gdt();
+
+    (__gdt_testing__.tests_units[1]->test_unit_function);
 
     kprintf(2, READY_COLOR, "Chargement des segments\n");
 
