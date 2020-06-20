@@ -8,23 +8,22 @@
 #include "include/test.h"
 // warning: Source file is more recent than executable.
 
-extern __test_frame__data__ test_case_result __gdt_testing__;
-int i = 0xFF5;
+extern char __text__start, __text__end;
+
+__attribute__((section(".text_code"))) int h;
 
 unsigned int main()
 {
     CLEAR_BSS_SECTION;
 
-    CLEAR_TEST_CODE;
+    // CLEAR_TEST_CODE;
 
-    CLEAR_TEST_DATA;
+    // CLEAR_TEST_DATA;
 
     pepper_screen();
     cli;
 
     init_gdt();
-
-    (__gdt_testing__.tests_units[1]->test_unit_function);
 
     kprintf(2, READY_COLOR, "Chargement des segments\n");
 
