@@ -1,24 +1,14 @@
-#define TEST_H
 #include "include/init/gdt.h"
 #include "include/init/idt.h"
 #include "include/init/io.h"
 #include "include/init/paging.h"
 #include "include/init/video.h"
 #include "include/lib.h"
-#include "include/test.h"
 // warning: Source file is more recent than executable.
-
-extern char __text__start, __text__end;
-
-__attribute__((section(".text_code"))) int h;
 
 unsigned int main()
 {
     CLEAR_BSS_SECTION;
-
-    // CLEAR_TEST_CODE;
-
-    // CLEAR_TEST_DATA;
 
     pepper_screen();
     cli;

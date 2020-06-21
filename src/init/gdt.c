@@ -1,13 +1,18 @@
+#define TEST_H
+#define TEST_M
 #include "../../include/init/gdt.h"
 #include "../../include/i386types.h"
 #include "../../include/init/video.h"
 #include "../../include/lib.h"
+#include "../../include/test.h"
+#include <stddef.h>
 
+extern test_case_result __gdt_testing__;
+void test__gdt();
 /*
  * init_desc initialise un descripteur de segment situe en gdt ou en ldt.
  * desc est l'adresse lineaire du descripteur a initialiser.
  */
-
 void init_gdt_desc(uint32_t base, uint32_t limite, uint8_t acces, uint8_t other, struct gdtdesc* desc)
 {
     desc->lim0_15 = (limite & 0xffff);
@@ -17,60 +22,8 @@ void init_gdt_desc(uint32_t base, uint32_t limite, uint8_t acces, uint8_t other,
     desc->lim16_19 = (limite & 0xf0000) >> 16;
     desc->other = (other & 0xf);
     desc->base24_31 = (base & 0xff000000) >> 24;
-    EncodeGDTEntry(desc, (uint8_t*)desc);
 }
 
-/**
- * \param target A pointer to the 8-byte GDT entry
- * \param source An arbitrary structure describing the GDT entry
- */
-
-void EncodeGDTEntry(struct gdtdesc* source, uint8_t* target)
-{
-    // Verifier la limite pour pouvoir l'encoder
-
-    unsigned int limit, base;
-
-    limit = (*source).lim16_19;
-    limit <<= 16;
-    limit |= (*source).lim0_15;
-
-    base = (*source).base24_31;
-    base <<= 8;
-    base |= (*source).base16_23;
-    base <<= 16;
-    base |= (*source).base0_15;
-
-    unsigned char type;
-
-    type = (*source).acces;
-
-    // Check the limit to make sure that it can be encoded
-    if ((limit > 65536) && ((limit & 0xFFF) != 0xFFF))
-        kprintf(2, LOADING_COLOR, "Reconfiguration des segments\n");
-
-    if (limit > 65536) {
-        // Adjust granularity if required
-        limit = limit >> 12;
-        target[6] = 0xC0;
-    }
-    else
-        target[6] = 0x40;
-
-    // Encode the limit
-    target[0] = limit & 0xFF;
-    target[1] = (limit >> 8) & 0xFF;
-    target[6] |= (limit >> 16) & 0xF;
-
-    // Encode the base
-    target[2] = base & 0xFF;
-    target[3] = (base >> 8) & 0xFF;
-    target[4] = (base >> 16) & 0xFF;
-    target[7] = (base >> 24) & 0xFF;
-
-    // And... Type
-    target[5] = type;
-}
 /*
  * Cette fonction initialise la GDT apres que le kernel soit charge
  * en memoire. Une GDT est deja operationnelle, mais c'est celle qui
@@ -81,6 +34,7 @@ void init_gdt(void)
 {
     /* initialisation des descripteurs de segment */
     init_gdt_desc(0x0, 0x0, 0x0, 0x0, &kgdt[0]);
+
     // Configuration code, noyau, pile système
     init_gdt_desc(0x0, 0xFFFFFF,
                   SEG_CODE_E_R_A | SEG_DESCTYPE(1) | SEG_PRIV(0) | SEG_PRES(1),
@@ -118,4 +72,25 @@ void init_gdt(void)
         movw %ax, %ss \n \
         movl $0x20000, %esp \n  \
         ");
+
+    test__gdt();
+}
+
+void test__gdt()
+{
+    uint32_t i = 0;
+
+    int (*func_ptr)(void) = (void*)__gdt_testing__.tests_units[0]->test_unit_function;
+    (*func_ptr)();
+
+    if (__gdt_testing__.tests_units[i]->passed == false)
+        kprintf(2, ERROR_COLOR, __gdt_testing__.tests_units[i]->test_unit_name);
+
+    // for (i = 1; i < __gdt_testing__.nmber_test; i++) {
+    //     if (__gdt_testing__.tests_units[i]->passed == true)
+    //         kprintf(2, ERROR_COLOR, __gdt_testing__.tests_units[i]->test_unit_name);
+
+    //     func_ptr = __gdt_testing__.tests_units[i]->test_unit_function;
+    //     (*func_ptr)();
+    // }
 }

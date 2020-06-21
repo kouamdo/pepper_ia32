@@ -16,51 +16,44 @@ It is more complicated to test the basic descriptor for OS code OS data OS Stack
 #include "../../../include/test.h"
 #include <stddef.h>
 
-extern char* gdt_ptr;
+extern char* kgdt;
 
-TEST_UNIT_FUNC(gdt_testing_func__1_);
 TEST_UNIT_FUNC(gdt_testing_func__2_);
 TEST_UNIT_FUNC(gdt_testing_func__3_);
-TEST_UNIT(__gdt_testing_1_);
 TEST_UNIT(__gdt_testing_2_);
 TEST_UNIT(__gdt_testing_3_);
 
 // try to verify the ceonservation of the GDT entries
 
-TEST_UNIT(__gdt_testing_1_) = {true, "test", "test", &gdt_testing_func__1_,
-                               NULL, NULL};
-
-TEST_UNIT_FUNC(gdt_testing_func__1_)
-{
-    uint64_t gdtr;
-
-    asm volatile("sgdt %0" : "=m"(gdtr)::"memory");
-
-    if (_memcmp_(gdt_ptr, &gdtr, sizeof(gdtr)) == false)
-        __gdt_testing_1_.passed = false;
-
-    else
-        __gdt_testing_1_.passed = true;
-}
-
 // Try to go beyond the limit expected , test DS segment
 
-TEST_UNIT(__gdt_testing_2_) = {true, "test", "test", &gdt_testing_func__2_,
-                               NULL, NULL};
+TEST_UNIT(__gdt_testing_2_) = {
+    true,
+    "test DS segment\n",
+    "Verify the DS segment beyond his expected limit\n",
+    &gdt_testing_func__2_,
+    NULL,
+    NULL};
 
 TEST_UNIT_FUNC(gdt_testing_func__2_)
 {
+    __gdt_testing_2_.passed = true;
     char* p;
-    p = (char*)0xFFFFFFFF;
+    p = (char*)0xFFFFFFFFF;
 
     *p = '\000';
 }
 
 // Try to go beyond the CS limit with RETF
-TEST_UNIT(__gdt_testing_3_) = {true, "test", "test", &gdt_testing_func__3_,
-                               NULL, NULL};
+TEST_UNIT(__gdt_testing_3_) = {true,
+                               "test CS segment\n",
+                               "Verify the CS beyond his expected limit\n",
+                               &gdt_testing_func__3_,
+                               NULL,
+                               NULL};
 TEST_UNIT_FUNC(gdt_testing_func__3_)
 {
+    __gdt_testing_3_.passed = true;
     asm volatile(
         "push $0xFFFFFF\n\t"
         "push $0x0\n\t"
@@ -72,15 +65,8 @@ TEST_UNIT_FUNC(gdt_testing_func__3_)
 TEST_CASE(__gdt_testing__) = {true,
                               "GDT testing\n\t",
                               "Test each segment entries\n\t",
-
                               {
-
-                                  &__gdt_testing_1_,
                                   &__gdt_testing_2_,
                                   &__gdt_testing_3_,
-
                               },
-
-                              3
-
-};
+                              2};
