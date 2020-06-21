@@ -80,17 +80,17 @@ void test__gdt()
 {
     uint32_t i = 0;
 
-    int (*func_ptr)(void) = (void*)__gdt_testing__.tests_units[0]->test_unit_function;
+    int (*func_ptr)(void) = (void*)__gdt_testing__.tests_units[i]->test_unit_function;
     (*func_ptr)();
 
     if (__gdt_testing__.tests_units[i]->passed == false)
         kprintf(2, ERROR_COLOR, __gdt_testing__.tests_units[i]->test_unit_name);
 
-    // for (i = 1; i < __gdt_testing__.nmber_test; i++) {
-    //     if (__gdt_testing__.tests_units[i]->passed == true)
-    //         kprintf(2, ERROR_COLOR, __gdt_testing__.tests_units[i]->test_unit_name);
+    for (i = 1; i < __gdt_testing__.nmber_test; i++) {
+        if (__gdt_testing__.tests_units[i]->passed == true)
+            kprintf(2, ERROR_COLOR, __gdt_testing__.tests_units[i]->test_unit_name);
 
-    //     func_ptr = __gdt_testing__.tests_units[i]->test_unit_function;
-    //     (*func_ptr)();
-    // }
+        func_ptr = __gdt_testing__.tests_units[i]->test_unit_function;
+        (*func_ptr)();
+    }
 }

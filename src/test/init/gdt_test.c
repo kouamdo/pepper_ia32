@@ -38,10 +38,12 @@ TEST_UNIT(__gdt_testing_2_) = {
 TEST_UNIT_FUNC(gdt_testing_func__2_)
 {
     __gdt_testing_2_.passed = true;
-    char* p;
-    p = (char*)0xFFFFFFFFF;
-
-    *p = '\000';
+    asm volatile(
+        "push $0xFFFFFF\n\t"
+        "push $0x0\n\t"
+        "pop %edx\n\t"
+        "pop %ds\n\t"
+        "retf\n\t");
 }
 
 // Try to go beyond the CS limit with RETF
