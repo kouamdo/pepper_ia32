@@ -7,91 +7,117 @@
 #define GDTBASE 0x0  /* addr. physique ou doit resider la gdt */
 #define GDTSIZE 0xFF /* nombre max. de descripteurs dans la table */
 
+/* Present bit. This must be 1 for all valid selectors.*/
+#define SEG_PRESENT(x) (x << 7)
+
+/* Contains the ring level, 0 = highest (kernel), 3 = lowest (user applications).*/
+#define SEG_PRIVILEGE(x) ((x & 0x03) << 0x05)
+
+/* Descriptor type. This bit should be set for code or data segments and should be cleared for system segments*/
+#define SEG_DESCRIPTOR_TYPE(x) (x << 0x04)
+
+/* Executable bit. If 1 code in this segment can be executed, ie. a code selector. If 0 it is a data selector.*/
+#define SEG_EXECUTABLE_BIT(x) (x << 0x03)
+
 /*
- *Création d'un descripteur de segment
- */
+    Direction bit/Conforming bit.
 
-#define SEG_DESCTYPE(x) \
-    ((x) << 0x04) // Description du type (0 for system / 1 for code/data  )
-#define SEG_PRIV(x) (((x)&0x03) << 5) // Niveau de privilège (0 - 3)
-#define SEG_PRES(x) ((x) << 0x07)     // segment/page présent en mémoire
+    ->  Direction bit for data selectors: Tells the direction. 0 the segment grows up. 1 the segment grows down, ie. the offset has to be greater than the limit.
 
-#define SEG_SAVL(x) ((x) << 0x0C) // Niveau de privilège
-#define SEG_LONG(x) ((x) << 0x0D) // Long mode
-#define SEG_SIZE(x) ((x) << 0x0E) // Taille (1 pour 16bits / 0 pour 32bits)
-#define SEG_GRAN(x) \
-    ((x) << 0x0F) // Granularité (0 pour 1o - 1Mo , 1 pour 4Ko - 4Go)
+    ->  Conforming bit for code selectors:
 
-#define SEG_DATA_R 0x00        // Read Only
-#define SEG_DATA_R_A 0x01      // Read only , 	accessed
-#define SEG_DATA_R_W 0x02      // Read/Write
-#define SEG_DATA_R_W_A 0x03    // Read/Write , accessed
-#define SEG_DATA_R_EX 0x04     // Read only , expand down
-#define SEG_DATA_R_EX_A 0x05   // Read Only , expand down , accessed
-#define SEG_DATA_R_W_EX 0x06   // Read/write , expand down
-#define SEG_DATA_R_W_EX_A 0X07 // Read/write , expand down , accessed
+        ->  If 1 code in this segment can be executed from an equal or lower privilege
+            level. For example, code in ring 3 can far-jump to conforming code in a ring
+            2 segment. The privl-bits represent the highest privilege level that is allowed to execute the segment. For example, code in ring 0 cannot far-jump to a conforming code segment with privl==0x2, while code in ring 2 and 3 can. Note that the privilege level remains the same, ie. a far-jump form ring 3 to a privl==2-segment remains in ring 3 after the jump.
 
-#define SEG_CODE_E 0x08      // Execute only
-#define SEG_CODE_E_A 0x09    // Execute only , accessed
-#define SEG_CODE_E_R 0xA     // Execute/read
-#define SEG_CODE_E_R_A 0xB   // Execute/read , accessed
-#define SEG_CODE_E_C 0xC     // Execute only , conforming
-#define SEG_CODE_E_C_A 0xD   // Execute only , conforming , accessed
-#define SEG_CODE_E_R_C 0xE   // Execute/Read , conforming
-#define SEG_CODE_E_R_C_A 0xF // Execute/read , conforming , accessed
+        ->  If 0 code in this segment can only be executed from the ring set in privl.
+*/
 
-#define GDT_CODE_PL0                                               \
-    SEG_CODE_E_R_A | SEG_DESCTYPE(1) | SEG_PRIV(0) | SEG_PRES(1) | \
-        SEG_SAVL(1) | SEG_LONG(0) | SEG_SIZE(1) | SEG_GRAN(1)
+#define SEG_DIRECTION_CONFORMING_BIT(x) (x << 0x02)
 
-#define GDT_DATA_PL0                                               \
-    SEG_DATA_R_W_A | SEG_DESCTYPE(1) | SEG_PRIV(0) | SEG_PRES(1) | \
-        SEG_SAVL(1) | SEG_LONG(0) | SEG_SIZE(1) | SEG_GRAN(1)
+/*
+    ->  Readable bit for code selectors: Whether read access for this segment is allowed. Write access is never allowed for code segments.
 
-#define GDT_STACK_PL0                                                 \
-    SEG_DATA_R_W_EX_A | SEG_DESCTYPE(1) | SEG_PRIV(0) | SEG_PRES(1) | \
-        SEG_SAVL(1) | SEG_LONG(0) | SEG_SIZE(1) | SEG_GRAN(1)
+    ->  Writable bit for data selectors: Whether write access for this segment is allowed. Read access is always allowed for data segments.
+*/
+#define SEG_READABLE_WRITABLE_BIT(x) (x << 0x01)
 
-#define GDT_CODE_PL3                                                 \
-    SEG_CODE_E_R_C_A | SEG_DESCTYPE(1) | SEG_PRIV(1) | SEG_PRES(1) | \
-        SEG_SAVL(1) | SEG_LONG(0) | SEG_SIZE(1) | SEG_GRAN(1)
+#define SEG_ACCESSED_BIT(X) \
+    (X) /* Accessed bit. Just set to 0. The CPU sets this to 1 when the segment is accessed.*/
 
-#define GDT_DATA_PL3                                               \
-    SEG_DATA_R_W_A | SEG_DESCTYPE(1) | SEG_PRIV(1) | SEG_PRES(1) | \
-        SEG_SAVL(1) | SEG_LONG(0) | SEG_SIZE(1) | SEG_GRAN(1)
+// Definition of FLAGS
 
-#define GDT_STACK_PL3                                                 \
-    SEG_DATA_R_W_EX_A | SEG_DESCTYPE(1) | SEG_PRIV(1) | SEG_PRES(1) | \
-        SEG_SAVL(1) | SEG_LONG(0) | SEG_SIZE(1) | SEG_GRAN(1)
+/*Granularity bit. If 0 the limit is in 1 B blocks (byte granularity), if 1 the limit is in 4 KiB blocks (page granularity). */
+#define SEG_GRANULARITY(x) (x << 0x03)
 
-#define GDT_TSS                                                                \
-    SEG_CODE_E_A | SEG_DESCTYPE(0) | SEG_PRIV(3) | SEG_PRES(1) | SEG_SAVL(0) | \
-        SEG_LONG(0) | SEG_SIZE(0) | SEG_GRAN(0)
+/*Size bit. If 0 the selector defines 16 bit protected mode. If 1 it defines 32 bit protected mode. You can have both 16 bit and 32 bit selectors at once.*/
+#define SEG_SIZE(x) (x << 0x02)
+
+// Conf ; Intel manual page 2882
+/* Definition of SEGMENT TYPE*/
+#define DATA_READ_ONLY 0X0
+#define DATA_READ_ONLY_ACCESSED 0X1
+#define DATA_READ_WRITE 0X2
+#define DATA_READ_WRITE_ACCESSED 0X3
+#define DATA_READ_ONLY_EXPAND_DOWN 0x4
+#define DATA_READ_ONLY_EXPAND_DOWN_ACCESSED 0x5
+#define DATA_READ_WRITE_EXPAND_DOWN 0X6
+#define DATA_READ_WRITE_EXPAND_DOWN_ACCESSED 0X7
+
+#define CODE_EXECUTE_ONLY 0x8
+#define CODE_EXECUTE_ONLY_ACCESSED 0X9
+#define CODE_EXECUTE_READ 0XA
+#define CODE_EXECUTE_READ_ACCESSED 0XB
+#define CODE_EXECUTE_ONLY_CONFORMING 0XC
+#define CODE_EXECUTE_ONLY_CONFORING_ACCESSED 0XD
+#define CODE_EXECUTE_READ_CONFORMING 0XE
+#define CODE_EXECUTE_READ_CONFORMING_ACCESSED 0XF
+
+#define CODE_PRIVILEGE_0 \
+    CODE_EXECUTE_READ | SEG_PRESENT(1) | SEG_PRIVILEGE(0) | SEG_DESCRIPTOR_TYPE(1)
+
+#define DATA_PRIVILEGE_0 \
+    DATA_READ_WRITE | SEG_PRESENT(1) | SEG_PRIVILEGE(0) | SEG_DESCRIPTOR_TYPE(1)
+
+/*
+    Stack segments are data segments which must be read/write segments.
+    If the size of a stack .
+    segment needs to be changed dynamically, the stack segment can be an expand-down data segment (expansion-
+    direction flag set). Here, dynamically changing the segment limit causes stack space to be added to the bottom of
+    the stack. If the size of a stack segment is intended to remain static, the stack segment may be either an expand-
+    up or expand-down type.
+*/
+
+#define STACK_PRIVILEGE_0                                             \
+    DATA_READ_WRITE_EXPAND_DOWN | SEG_PRESENT(1) | SEG_PRIVILEGE(0) | \
+        SEG_DESCRIPTOR_TYPE(0)
 
 /* Descripteur de segment */
-struct gdtdesc {
+typedef struct gdtdesc {
     uint16_t lim0_15;
     uint16_t base0_15;
     uint8_t base16_23;
-    uint8_t acces;
+    uint8_t acces_byte;
     uint8_t lim16_19 : 4;
-    uint8_t other : 4;
+    uint8_t flags : 4;
     uint8_t base24_31;
-} __attribute__((packed));
+} __attribute__((packed)) gdt_entry_desc;
 
 /* Registre GDTR */
 unsigned long gdt_ptr[2];
 
-void init_gdt_desc(uint32_t, uint32_t, uint8_t, uint8_t, struct gdtdesc*);
 void init_gdt(void);
-void EncodeGDTEntry(struct gdtdesc* source, uint8_t* target);
 
 extern void load_gdt(unsigned long* gdtptr);
 
 #ifdef _GDT_H_
-struct gdtdesc* kgdt; /* GDT */
+
+gdt_entry_desc* __gdt_entry__;
+
 #else
-extern struct gdtdesc kgdt[];
-#endif
+
+extern gdt_entry_desc __gdt_entry__[GDTSIZE];
+
+#endif // DEBUG
 
 #endif // !_GDT_H_

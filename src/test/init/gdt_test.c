@@ -23,8 +23,6 @@ TEST_UNIT_FUNC(gdt_testing_func__3_);
 TEST_UNIT(__gdt_testing_2_);
 TEST_UNIT(__gdt_testing_3_);
 
-// try to verify the ceonservation of the GDT entries
-
 // Try to go beyond the limit expected , test DS segment
 
 TEST_UNIT(__gdt_testing_2_) = {
