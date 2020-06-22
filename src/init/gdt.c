@@ -1,5 +1,4 @@
 #define TEST_H
-#define TEST_M
 #include "../../include/init/gdt.h"
 #include "../../include/i386types.h"
 #include "../../include/init/video.h"
@@ -8,22 +7,24 @@
 #include <stddef.h>
 
 extern test_case_result __gdt_testing__;
+static gdt_entry_desc* __gdt_entry__ = (gdt_entry_desc*)0x0;
+extern void load_gdt();
 void test__gdt();
 /*
  * init_desc initialise un descripteur de segment situe en gdt ou en ldt.
  * desc est l'adresse lineaire du descripteur a initialiser.
  */
-static void init_gdt_entry(uint32_t base, uint32_t limite, uint8_t access, uint8_t flags, gdt_entry_desc desc)
+static void init_gdt_entry(uint32_t base, uint32_t limite, uint8_t access, uint8_t flags, gdt_entry_desc* desc)
 {
-    desc.lim0_15 = (limite & 0xFFFF);
-    desc.lim16_19 = (limite & 0xF0000) >> 16;
+    desc->lim0_15 = (limite & 0xFFFF);
+    desc->lim16_19 = (limite & 0xF0000) >> 16;
 
-    desc.base0_15 = (base & 0xFFFF);
-    desc.base16_23 = (base & 0xFF0000) >> 16;
-    desc.base24_31 = (base & 0xFF000000) >> 24;
+    desc->base0_15 = (base & 0xFFFF);
+    desc->base16_23 = (base & 0xFF0000) >> 16;
+    desc->base24_31 = (base & 0xFF000000) >> 24;
 
-    desc.flags = flags;
-    desc.acces_byte = access;
+    desc->flags = flags;
+    desc->acces_byte = access;
 }
 
 /*
@@ -35,35 +36,40 @@ static void init_gdt_entry(uint32_t base, uint32_t limite, uint8_t access, uint8
 void init_gdt(void)
 {
     /* initialisation des descripteurs de segment */
-    init_gdt_entry(0x0, 0x0, 0x0, 0x0, __gdt_entry__[0]);
+    init_gdt_entry(0x0, 0x0, 0x0, 0x0, &__gdt_entry__[0]);
 
     // Segment de code
     init_gdt_entry(0, 0xFFFFF, CODE_PRIVILEGE_0,
-                   SEG_GRANULARITY(1) | SEG_SIZE(1), __gdt_entry__[1]);
+                   SEG_GRANULARITY(0) | SEG_SIZE(1), &__gdt_entry__[1]);
 
     // Segment de donnée
-    init_gdt_entry(0, 0xFFFFF, DATA_PRIVILEGE_0, 0, __gdt_entry__[2]);
+    init_gdt_entry(0, 0xFFFFF, DATA_PRIVILEGE_0,
+                   SEG_GRANULARITY(0) | SEG_SIZE(1) | 0x0, &__gdt_entry__[2]);
 
     // Segment de pile
-    init_gdt_entry(0, 0xFFFFF, STACK_PRIVILEGE_0, 0, __gdt_entry__[3]);
+    init_gdt_entry(0, 0xFFFFF, STACK_PRIVILEGE_0,
+                   SEG_GRANULARITY(0) | SEG_SIZE(1) | 0x0, &__gdt_entry__[3]);
+
+    // Chargement de la GDT
+    load_gdt();
 
     /* Reinitialisation des segments */
+
+    /*
+        0x10(16) tout simplement parceque le data segment est à 16 + @base_gdt
+        0x8 car code segment est à @base gdt + 8
+        0x18 car stack segment est à @base gdt+24
+    */
     __asm__ __volatile__(
         "   movw $0x10, %ax	\n \
             movw %ax, %ds	\n \
             movw %ax, %es	\n \
             movw %ax, %fs	\n \
             movw %ax, %gs	\n \
-            ljmp $0x08, $next	\n \
-            next:		\n"); // Long jump after reconfiguration of all segment
-    // Allocation de 10ko de pile
-    __asm__ __volatile__(
-        "movw $0x18, %ax \n \
-        movw %ax, %ss \n \
-        movl $0x20000, %esp \n  \
-        ");
-
-    test__gdt();
+            movw $0x18, %ax \n \
+            movw %ax, %ss \n \
+            ljmp $0x08, $next	\n  \
+            next:    \n"); // Long jump after reconfiguration of all segment
 }
 
 void test__gdt()

@@ -50,7 +50,11 @@
 /*Granularity bit. If 0 the limit is in 1 B blocks (byte granularity), if 1 the limit is in 4 KiB blocks (page granularity). */
 #define SEG_GRANULARITY(x) (x << 0x03)
 
-/*Size bit. If 0 the selector defines 16 bit protected mode. If 1 it defines 32 bit protected mode. You can have both 16 bit and 32 bit selectors at once.*/
+/*
+
+Size bit. If 0 the selector defines 16 bit protected mode. If 1 it defines 32 bit protected mode. You can have both 16 bit and 32 bit selectors at once.
+    Conf : Intel Manual page 2881
+*/
 #define SEG_SIZE(x) (x << 0x02)
 
 // Conf ; Intel manual page 2882
@@ -90,7 +94,7 @@
 
 #define STACK_PRIVILEGE_0                                             \
     DATA_READ_WRITE_EXPAND_DOWN | SEG_PRESENT(1) | SEG_PRIVILEGE(0) | \
-        SEG_DESCRIPTOR_TYPE(0)
+        SEG_DESCRIPTOR_TYPE(1)
 
 /* Descripteur de segment */
 typedef struct gdtdesc {
@@ -103,21 +107,6 @@ typedef struct gdtdesc {
     uint8_t base24_31;
 } __attribute__((packed)) gdt_entry_desc;
 
-/* Registre GDTR */
-unsigned long gdt_ptr[2];
-
 void init_gdt(void);
-
-extern void load_gdt(unsigned long* gdtptr);
-
-#ifdef _GDT_H_
-
-gdt_entry_desc* __gdt_entry__;
-
-#else
-
-extern gdt_entry_desc __gdt_entry__[GDTSIZE];
-
-#endif // DEBUG
 
 #endif // !_GDT_H_
