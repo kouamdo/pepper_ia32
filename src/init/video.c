@@ -107,31 +107,30 @@ void volatile scrollup()
 
 void volatile putchar(unsigned char color, unsigned const char c)
 {
-    if (c != 10) {
-        if (CURSOR_Y > 25) {
-            scrollup();
-            CURSOR_X = 0;
-            CURSOR_Y = 0;
-        }
-        unsigned char* v = (unsigned char*)(VIDEO_MEM + CURSOR_X * 2 + 160 * CURSOR_Y);
-
-        if (c == 10 || CURSOR_X == 80) {
-            CURSOR_X = 0;
-            CURSOR_Y++;
-            *(v) = c;
-            *(v + 1) = color;
-            CURSOR_X++;
-        }
-        else {
-            *(v) = c;
-            *(v + 1) = color;
-            CURSOR_X++;
-        }
-    }
-
-    else {
+    if (c == '\n') {
         CURSOR_X = 0;
         CURSOR_Y++;
+        return;
+    }
+
+    else if (c == '\t') {
+        CURSOR_X += 5;
+        return;
+    }
+
+    unsigned char* v = (unsigned char*)(VIDEO_MEM + CURSOR_X * 2 + 160 * CURSOR_Y);
+
+    if (c == '\n' || CURSOR_X == 80) {
+        CURSOR_X = 0;
+        CURSOR_Y++;
+        *(v) = c;
+        *(v + 1) = color;
+        CURSOR_X++;
+    }
+    else {
+        *(v) = c;
+        *(v + 1) = color;
+        CURSOR_X++;
     }
 }
 
