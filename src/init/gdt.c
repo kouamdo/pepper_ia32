@@ -9,7 +9,6 @@
 extern test_case_result __gdt_testing__;
 static gdt_entry_desc* __gdt_entry__ = (gdt_entry_desc*)0x0;
 extern void load_gdt();
-void test__gdt();
 /*
  * init_desc initialise un descripteur de segment situe en gdt ou en ldt.
  * desc est l'adresse lineaire du descripteur a initialiser.
@@ -70,23 +69,6 @@ void init_gdt(void)
             movw %ax, %ss \n \
             ljmp $0x08, $next	\n  \
             next:    \n"); // Long jump after reconfiguration of all segment
-}
 
-void test__gdt()
-{
-    uint32_t i = 0;
-
-    int (*func_ptr)(void) = (void*)__gdt_testing__.tests_units[i]->test_unit_function;
-    (*func_ptr)();
-
-    if (__gdt_testing__.tests_units[i]->passed == false)
-        kprintf(2, ERROR_COLOR, __gdt_testing__.tests_units[i]->test_unit_name);
-
-    for (i = 1; i < __gdt_testing__.nmber_test; i++) {
-        if (__gdt_testing__.tests_units[i]->passed == true)
-            kprintf(2, ERROR_COLOR, __gdt_testing__.tests_units[i]->test_unit_name);
-
-        func_ptr = __gdt_testing__.tests_units[i]->test_unit_function;
-        (*func_ptr)();
-    }
+    kprintf(2, 15, "[K:CPU]\tBytes per block as limit for each segment\n");
 }

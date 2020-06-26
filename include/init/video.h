@@ -4,7 +4,7 @@
 #define _VIDEO_H_
 
 #define LOADING_COLOR \
-    0X01 // Couleur dédié pour le chargement d'une fonctionnalité
+    0XF1 // Couleur dédié pour le chargement d'une fonctionnalité
 #define READY_COLOR \
     0X07 // Couleur dédié pour une action qui c'est déjà produite
 #define ADVICE_COLOR 0X06 // Couleur pour les conseils

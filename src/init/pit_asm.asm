@@ -21,7 +21,8 @@ PIT_handler:
 	iret
 
 irq_PIT:
-         call conserv_status_byte
+       call conserv_status_byte
+
         mov eax ,dword [IRQ0_fractions]
         mov ebx ,dword [IRQ0_ms]  ;eax.ebx = amount of time between IRQs
         add dword [system_timer_fractions] , eax  ;Update system timer ticks fractions

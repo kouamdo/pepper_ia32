@@ -1,8 +1,12 @@
+#define TEST_H
 #include "../../include/init/idt.h"
 #include "../../include/init/pic.h"
 #include "../../include/init/pit.h"
 #include "../../include/init/video.h"
 #include "../../include/lib.h"
+#include "../../include/test.h"
+
+extern test_case_result __idt_testing__;
 
 __idt_entry__ __idt__[IDTSIZE];
 
@@ -65,4 +69,8 @@ void init_idt()
 
     /* initialisation de la structure pour IDTR */
     load_idt();
+
+    kprintf(2, 15, "[K:PIC]\tInterruptions mapped\n");
+    kprintf(2, 15, "[K:PIT]\tUpdate system timer\n");
+    kprintf(2, 15, "[K:CPU]\tInterruptions initialized\n");
 }

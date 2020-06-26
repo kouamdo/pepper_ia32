@@ -13,6 +13,8 @@ void volatile pepper_screen()
         screen[i + 1] = 0x0;
         i += 2;
     }
+    kprintf(2, LOADING_COLOR,
+            "PEPPER_OS \t: https://github.com/kouamdo/pepper_ia32\n\n");
 }
 
 void volatile print_frequence(unsigned int freq)

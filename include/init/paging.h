@@ -52,9 +52,6 @@ extern void _EnablingPaging_();
 */
 physaddr_t map_page(virtaddr_t virtual_address, uint16_t flag_directory, uint16_t flag_table);
 
-// Elle permet de détruuire une page
-void unmap_page(virtaddr_t virtual_address);
-
 #include "../lib.h"
 // Determiner la technologie de Pagination
 // Detecté le PSE

@@ -9,20 +9,17 @@
 void init_phymem_manage();
 
 typedef struct _address_order_table_ {
-  physaddr_t                    _address_;
-  uint32_t                      order;
-  struct _address_order_table_* previous_;
-  struct _address_order_table_* next_;
+    physaddr_t _address_;
+    uint32_t order;
+    struct _address_order_table_* previous_;
+    struct _address_order_table_* next_;
 } __attribute__((packed)) _address_order_track_;
 
 #define END_LIST ((_address_order_track_*)NULL)
 _address_order_track_ alloc_page(uint32_t order);
 
 _address_order_track_* _page_area_track_;
-uint32_t               NMBER_PAGES_ALLOC;
-
-
-
+uint32_t NMBER_PAGES_ALLOC;
 
 /*
     Free pages,
