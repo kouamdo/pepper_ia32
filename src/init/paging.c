@@ -4,12 +4,10 @@
 #include "../../include/init/video.h"
 #include "../../include/test.h"
 
+static uint32_t first_page_table[PAGE_TABLE_OFFSET]
+    __attribute__((aligned(PAGE_TABLE_SIZE)));
+
 extern test_case_result paging_test;
-
-uint32_t page_directory[PAGE_DIRECTORY_OFFSET]
-    __attribute__((aligned(PAGE_DIRECTORY_SIZE)));
-
-uint32_t first_page_table[PAGE_TABLE_OFFSET] __attribute__((aligned(PAGE_TABLE_SIZE)));
 
 extern uint32_t error_code;
 extern void _FlushPagingCache_();
@@ -46,7 +44,7 @@ void init_paging()
     _EnablingPaging_();
 
     kprintf(2, 15, "[K:CPU]\tPaging enabled and mapped\n");
-    kprintf(2, 15, "[K:CPU]\tMappig 4Mo of physicala memory\n");
+    kprintf(2, 15, "[K:CPU]\tMapping 4Mo of physical memory\n");
 
     // __RUN_TEST__(paging_test);
 }

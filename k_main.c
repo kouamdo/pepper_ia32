@@ -4,6 +4,7 @@
 #include "include/init/paging.h"
 #include "include/init/video.h"
 #include "include/lib.h"
+#include "include/mm.h"
 // warning: Source file is more recent than executable.
 
 unsigned int main()
@@ -23,6 +24,10 @@ unsigned int main()
     init_paging();
 
     sti;
+
+    kprintf(2, 11, "\n\n[\t\t\t\t\t\tK:::Load Memory Manager\t\t\t\t\t]\n\n\n");
+
+    init_phymem_manage();
 
     while (1)
         ;

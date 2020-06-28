@@ -48,10 +48,10 @@ typedef struct test_case_result {
         if (test.tests_units[i]->passed == false)                               \
             kprintf(2, 4, test.tests_units[i]->test_unit_name);                 \
         for (i = 1; i < test.nmber_test; i++) {                                 \
-            if (test.tests_units[i]->passed == false)                           \
-                kprintf(2, 4, test.tests_units[i]->test_unit_name);             \
             func_ptr = test.tests_units[i]->test_unit_function;                 \
             (*func_ptr)();                                                      \
+            if (test.tests_units[i]->passed == false)                           \
+                kprintf(2, 4, test.tests_units[i]->test_unit_name);             \
         }                                                                       \
     })
 #endif

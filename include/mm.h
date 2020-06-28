@@ -8,6 +8,8 @@
 
 void init_phymem_manage();
 
+#define KERNEL__PHY_MEM 0X100000
+
 typedef struct _address_order_table_ {
     physaddr_t _address_;
     uint32_t order;
@@ -17,9 +19,6 @@ typedef struct _address_order_table_ {
 
 #define END_LIST ((_address_order_track_*)NULL)
 _address_order_track_ alloc_page(uint32_t order);
-
-_address_order_track_* _page_area_track_;
-uint32_t NMBER_PAGES_ALLOC;
 
 /*
     Free pages,
