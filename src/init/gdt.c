@@ -49,6 +49,8 @@ void init_gdt(void)
     init_gdt_entry(0, 0xFFFFF, STACK_PRIVILEGE_0,
                    SEG_GRANULARITY(0) | SEG_SIZE(1) | 0x0, &__gdt_entry__[3]);
 
+    kprintf(2, 15, "[K:CPU]\tBytes per block as limit for each segment\n");
+
     // Chargement de la GDT
     load_gdt();
 
@@ -68,7 +70,5 @@ void init_gdt(void)
             movw $0x18, %ax \n \
             movw %ax, %ss \n \
             ljmp $0x08, $next	\n  \
-            next:    \n"); // Long jump after reconfiguration of all segment
-
-    kprintf(2, 15, "[K:CPU]\tBytes per block as limit for each segment\n");
+            next:   \n"); // Long jump after reconfiguration of all segment
 }

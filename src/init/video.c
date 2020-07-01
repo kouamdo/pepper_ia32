@@ -4,7 +4,7 @@
 static int CURSOR_Y = 0;
 static int CURSOR_X = 0;
 
-void volatile pepper_screen()
+void pepper_screen()
 {
     unsigned char* screen = (unsigned char*)(VIDEO_MEM);
     int i = 0;
@@ -17,7 +17,7 @@ void volatile pepper_screen()
             "PEPPER_OS \t: https://github.com/kouamdo/pepper_ia32\n\n");
 }
 
-void volatile print_frequence(unsigned int freq)
+void print_frequence(unsigned int freq)
 {
     unsigned char* pos = (unsigned char*)(VIDEO_MEM + 160 * 25 - 10);
     unsigned char i = 10;
@@ -30,7 +30,7 @@ void volatile print_frequence(unsigned int freq)
     }
 }
 
-void volatile kprintf(int nmber_param, ...)
+void kprintf(int nmber_param, ...)
 {
     int val = 0;
     va_list ap;
@@ -63,7 +63,7 @@ void volatile kprintf(int nmber_param, ...)
     va_end(ap);
 }
 
-// void volatile  write_string(unsigned char colour, const char string[40]) {
+// void   write_string(unsigned char colour, const char string[40]) {
 //     if (CURSOR_Y >= 25) {
 //         scrollup();
 //         CURSOR_X = 0;
@@ -89,7 +89,7 @@ void volatile kprintf(int nmber_param, ...)
 //     }
 // }
 
-void volatile scrollup()
+void scrollup()
 {
     unsigned char* v = (unsigned char*)(VIDEO_MEM + 3840);
     unsigned char b[160];
@@ -107,7 +107,7 @@ void volatile scrollup()
     CURSOR_Y++;
 }
 
-void volatile putchar(unsigned char color, unsigned const char c)
+void putchar(unsigned char color, unsigned const char c)
 {
     if (c == '\n') {
         CURSOR_X = 0;
@@ -136,7 +136,7 @@ void volatile putchar(unsigned char color, unsigned const char c)
     }
 }
 
-void volatile print_address(unsigned char color, unsigned int adress__)
+void print_address(unsigned char color, unsigned int adress__)
 {
     char p[10] = {0};
 

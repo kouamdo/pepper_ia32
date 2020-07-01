@@ -12,14 +12,14 @@
 
 #define VIDEO_MEM 0xb8000
 
-void volatile write_string(unsigned char colour, const char string[40]);
-void volatile pepper_screen();
-void volatile scrollup();
-void volatile putchar(unsigned char color, unsigned const char c);
-void volatile kprintf(int nmber_param, ...);
-void volatile print_frequence(unsigned int freq);
+void write_string(unsigned char colour, const char string[40]);
+void pepper_screen();
+void scrollup();
+void putchar(unsigned char color, unsigned const char c);
+void kprintf(int nmber_param, ...);
+void print_frequence(unsigned int freq);
 /*Print ADDRESS*/
 
-void volatile print_address(unsigned char color, unsigned int adress_);
+void print_address(unsigned char color, unsigned int adress_);
 
 #endif // !VIDEO_H

@@ -58,7 +58,7 @@ TEST_UNIT_FUNC(phy_mem_test_func__1)
     uint32_t i;
     phy_mem_test__1.passed = true;
 
-    for (i = 1; i <= 1000; i++)
+    for (i = 0; i < 0x400; i++)
         alloc_page(i);
 
     _address_order_track_* tmp;
@@ -80,7 +80,7 @@ TEST_UNIT_FUNC(phy_mem_test_func__2)
 {
     uint32_t i;
 
-    for (i = 1; i <= 1000; i++)
+    for (i = 0; i < 0x400; i++)
         free_page(*_page_area_track_);
 
     if (_page_area_track_->next_ == END_LIST)
@@ -95,42 +95,52 @@ TEST_UNIT_FUNC(phy_mem_test_func__3)
     if (phy_mem_test__2.passed == false || phy_mem_test__1.passed == false)
         phy_mem_test__3.passed = false;
 
-    else {
-        uint32_t i;
+    uint32_t i;
 
-        for (i = 1; i <= 1000; i++)
-            alloc_page(i);
+    // Begin by allocate some page
+    for (i = 0; i < 0x400; i++)
+        alloc_page(i);
 
-        for (i = 1; i < 1000; i++) {
-            uint32_t j = compteur % (1000 - i), k = 1;
-
-            _address_order_track_* tmp;
-
-            tmp = _page_area_track_;
-
-            while (k != j && tmp->next_ != END_LIST) {
-                tmp = tmp->next_;
-                k++;
-            }
-
-            free_page(*tmp);
-        }
+    // Remove it randomly
+    for (i = 0; i < 0x400; i++) {
+        int j = compteur % (0x400 - i), k = 1;
 
         _address_order_track_* tmp;
 
-        tmp = _page_area_track_->next_;
+        tmp = _page_area_track_;
 
-        while (tmp != END_LIST) {
-            if (tmp->_address_ == tmp->previous_->_address_ + (tmp->order * PAGE_SIZE)) {
-                phy_mem_test__3.passed = false;
-                break;
-            }
+        while (tmp->next_ != END_LIST && k < j) {
             tmp = tmp->next_;
+            k++;
         }
+
+        free_page(*tmp);
     }
+
+    if (_page_area_track_->_address_ == NO_PHYSICAL_ADDRESS)
+        phy_mem_test__3.passed = true;
 }
 TEST_UNIT_FUNC(phy_mem_test_func__4)
 {
+    // uint32_t i, j;
+
+    // for (i = 0; i < 0x40; i++) {
+    //     j = compteur % (5);
+
+    //     alloc_page(j);
+    // }
+
+    // _address_order_track_* tmp;
+
+    // tmp = _page_area_track_->next_;
+
+    // while (tmp != END_LIST) {
+    //     if (tmp->_address_ == tmp->previous_->_address_ + (tmp->order * PAGE_SIZE)) {
+    //         phy_mem_test__4.passed = false;
+    //         break;
+    //     }
+    //     tmp = tmp->next_;
+    // }
 }
 
 TEST_CASE(__phy_mem_manager__) = {true,

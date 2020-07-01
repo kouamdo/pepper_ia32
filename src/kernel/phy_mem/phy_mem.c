@@ -135,8 +135,16 @@ void free_page(_address_order_track_ page)
     }
 
     // If we have only one page in the list
-    else if (page.previous_ == END_LIST && page.next_ == END_LIST)
-        page._address_ = NO_PHYSICAL_ADDRESS;
+    else if (page.previous_ == END_LIST && page.next_ == END_LIST) {
+        _page_area_track_ = MEMORY_SPACES_PAGES;
+        (*_page_area_track_).next_ = END_LIST;
+        (*_page_area_track_).previous_ = END_LIST;
+        (*_page_area_track_)._address_ = NO_PHYSICAL_ADDRESS;
+        (*_page_area_track_).order = 0;
+
+        for (uint32_t i = 0; i < 0x400; i++)
+            MEMORY_SPACES_PAGES[i]._address_ = NO_PHYSICAL_ADDRESS;
+    }
 
     else {
         _address_order_track_* tmp;
