@@ -65,7 +65,7 @@ TEST_UNIT_FUNC(phy_mem_test_func__1)
 
     tmp = _page_area_track_->next_;
 
-    while (tmp != END_LIST) {
+    while (tmp->next_ != END_LIST) {
         if (tmp->_address_ == tmp->previous_->_address_ + (tmp->order * PAGE_SIZE)) {
             phy_mem_test__1.passed = false;
             break;
@@ -122,25 +122,25 @@ TEST_UNIT_FUNC(phy_mem_test_func__3)
 }
 TEST_UNIT_FUNC(phy_mem_test_func__4)
 {
-    // uint32_t i, j;
+    uint32_t i, j;
 
-    // for (i = 0; i < 0x40; i++) {
-    //     j = compteur % (5);
+    for (i = 0; i < 0x400; i++) {
+        j = compteur % (5);
 
-    //     alloc_page(j);
-    // }
+        alloc_page(j);
+    }
 
-    // _address_order_track_* tmp;
+    _address_order_track_* tmp;
 
-    // tmp = _page_area_track_->next_;
+    tmp = _page_area_track_;
 
-    // while (tmp != END_LIST) {
-    //     if (tmp->_address_ == tmp->previous_->_address_ + (tmp->order * PAGE_SIZE)) {
-    //         phy_mem_test__4.passed = false;
-    //         break;
-    //     }
-    //     tmp = tmp->next_;
-    // }
+    while (tmp->next_ != END_LIST) {
+        if (tmp->_address_ == tmp->previous_->_address_ + (tmp->order * PAGE_SIZE)) {
+            phy_mem_test__4.passed = false;
+            break;
+        }
+        tmp = tmp->next_;
+    }
 }
 
 TEST_CASE(__phy_mem_manager__) = {true,

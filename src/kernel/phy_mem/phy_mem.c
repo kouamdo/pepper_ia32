@@ -33,26 +33,24 @@ static uint32_t _kernel_table_[PAGE_TABLE_OFFSET]
 
 void init_phymem_manage()
 {
-    uint32_t i;
-    for (i = 0; i < PAGE_TABLE_OFFSET; i++) {
-        _kernel_table_[i] = (i << 12) | (PAGE_PRESENT(1) | PAGE_READ_WRITE |
-                                         PAGE_ACCESSED(1) | PAGE_SUPERVISOR);
-    }
-
-    create_page_table(_kernel_table_, 1);
-
     _page_area_track_ = MEMORY_SPACES_PAGES;
     (*_page_area_track_).next_ = END_LIST;
     (*_page_area_track_).previous_ = END_LIST;
     (*_page_area_track_)._address_ = NO_PHYSICAL_ADDRESS;
     (*_page_area_track_).order = 0;
 
+    uint32_t i;
+
     for (i = 0; i < 0x400; i++)
         MEMORY_SPACES_PAGES[i]._address_ = NO_PHYSICAL_ADDRESS;
 
-    kprintf(2, 15, "[K:PHY_MEM]\tInitialsation of physical memory manager\n");
+    for (i = 0; i < PAGE_TABLE_OFFSET; i++) {
+        _kernel_table_[i] = (i << 12) | (PAGE_PRESENT(1) | PAGE_READ_WRITE |
+                                         PAGE_ACCESSED(1) | PAGE_SUPERVISOR);
+    }
+    create_page_table(_kernel_table_, 1);
 
-    __RUN_TEST__(__phy_mem_manager__);
+    kprintf(2, 15, "[K:PHY_MEM]\tInitialsation of physical memory manager\n");
 }
 
 _address_order_track_ alloc_page(uint32_t order)

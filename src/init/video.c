@@ -112,27 +112,26 @@ void putchar(unsigned char color, unsigned const char c)
     if (c == '\n') {
         CURSOR_X = 0;
         CURSOR_Y++;
-        return;
     }
 
-    else if (c == '\t') {
+    else if (c == '\t')
         CURSOR_X += 5;
-        return;
-    }
 
-    unsigned char* v = (unsigned char*)(VIDEO_MEM + CURSOR_X * 2 + 160 * CURSOR_Y);
-
-    if (c == '\n' || CURSOR_X == 80) {
-        CURSOR_X = 0;
-        CURSOR_Y++;
-        *(v) = c;
-        *(v + 1) = color;
-        CURSOR_X++;
-    }
     else {
-        *(v) = c;
-        *(v + 1) = color;
-        CURSOR_X++;
+        unsigned char* v = (unsigned char*)(VIDEO_MEM + CURSOR_X * 2 + 160 * CURSOR_Y);
+
+        if (c == '\n' || CURSOR_X == 80) {
+            CURSOR_X = 0;
+            CURSOR_Y++;
+            *(v) = c;
+            *(v + 1) = color;
+            CURSOR_X++;
+        }
+        else {
+            *(v) = c;
+            *(v + 1) = color;
+            CURSOR_X++;
+        }
     }
 }
 
