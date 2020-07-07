@@ -21,7 +21,7 @@ TEST_UNIT_FUNC(phy_mem_test_func__4);
 TEST_UNIT(phy_mem_test__1) = {
 
     true,
-    "Call alloc page for different chunk of page",
+    "1 -> Call alloc page for different chunk of page",
     "Call alloc page for different chunk of page and verify the correct "
     "address",
     &phy_mem_test_func__1,
@@ -30,7 +30,7 @@ TEST_UNIT(phy_mem_test__1) = {
 
 TEST_UNIT(phy_mem_test__2) = {
     true,
-    "Make multiple free page",
+    "2 -> Make multiple free page",
     "Make sure that multiple free page with the same address doesn't break",
     &phy_mem_test_func__2,
     NULL,
@@ -38,7 +38,7 @@ TEST_UNIT(phy_mem_test__2) = {
 
 TEST_UNIT(phy_mem_test__3) = {
     true,
-    "Allocate all available memory with the same junk size in the loop",
+    "3 -> Allocate all available memory with the same junk size in the loop",
     "Allocate all available memory with the same junk size in the loop Then "
     "free them in random order, make sure there are no errors.",
     &phy_mem_test_func__3,
@@ -47,7 +47,7 @@ TEST_UNIT(phy_mem_test__3) = {
 
 TEST_UNIT(phy_mem_test__4) = {
     true,
-    "Allocate all available memory with random chunk sizes",
+    "4 -> Allocate all available memory with random chunk sizes",
     " Allocate all available memory with random chunk sizes, then free",
     &phy_mem_test_func__4,
     NULL,
@@ -124,15 +124,15 @@ TEST_UNIT_FUNC(phy_mem_test_func__4)
 {
     uint32_t i, j;
 
-    for (i = 0; i < 0x400; i++) {
-        j = compteur % (5);
+    for (i = 1; i < 10; i++) {
+        j = compteur % (i+1);
 
         alloc_page(j);
     }
 
     _address_order_track_* tmp;
 
-    tmp = _page_area_track_;
+    tmp = _page_area_track_->next_;
 
     while (tmp->next_ != END_LIST) {
         if (tmp->_address_ == tmp->previous_->_address_ + (tmp->order * PAGE_SIZE)) {

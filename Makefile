@@ -32,7 +32,6 @@ OBJECTS_ASM := $(SOURCES_ASM:.asm=.o)
 
 all: boot mixt disk
 	clear
-	rm bin/kernel.bin
 	qemu-system-i386 -fda disk.img -d cpu_reset -d int -serial file:serial.log
 
 mixt: k_main.o $(OBJECTS) $(OBJECTS_ASM)

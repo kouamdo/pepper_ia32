@@ -51,6 +51,8 @@ void init_phymem_manage()
     create_page_table(_kernel_table_, 1);
 
     kprintf(2, 15, "[K:PHY_MEM]\tInitialsation of physical memory manager\n");
+
+    // __RUN_TEST__(__phy_mem_manager__);
 }
 
 _address_order_track_ alloc_page(uint32_t order)

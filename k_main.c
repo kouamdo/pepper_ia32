@@ -30,6 +30,7 @@ unsigned int main()
     init_phymem_manage();
 
     while (1)
+
         ;
 
     return 0;

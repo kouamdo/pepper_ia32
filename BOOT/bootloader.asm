@@ -9,7 +9,7 @@ _start:
     mov ss, ax
     mov sp, 0x8000      ; Stack pointer at SS:SP = 0x0000:0x8000
     mov [BOOT_DRIVE], dl; Boot drive passed to us by the BIOS
-    mov dh, 30          ; Number of sectors (kernel.bin) to read from disk
+    mov dh, 50          ; Number of sectors (kernel.bin) to read from disk
                         ; 30*512 allows for a kernel.bin up to 8704 bytes
     mov bx, 0x9000      ; Load Kernel to ES:BX = 0x0000:0x9000
 
