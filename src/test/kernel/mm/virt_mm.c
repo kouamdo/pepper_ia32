@@ -71,7 +71,6 @@ TEST_UNIT_FUNC(mm_test_func__1)
     while (tmp->next != (_virt_mm_*)NULL) {
         if (tmp->address != tmp_prev->address + tmp_prev->size) {
             mm_test__1.passed = false;
-            asm("hlt");
             return;
         }
         tmp_prev = tmp;
