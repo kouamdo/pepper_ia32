@@ -6,7 +6,10 @@
 
 #define _MM_
 
-void init_phymem_manage();
+#ifdef KERNEL__PAGE_MM
+
+void init_page_mem_manage();
+#define END_LIST ((_address_order_track_*)NULL)
 
 #define KERNEL__PHY_MEM 0X100000
 
@@ -17,7 +20,6 @@ typedef struct _address_order_table_ {
     struct _address_order_table_* next_;
 } __attribute__((packed)) _address_order_track_;
 
-#define END_LIST ((_address_order_track_*)NULL)
 _address_order_track_ alloc_page(uint32_t order);
 
 /*
@@ -27,9 +29,29 @@ _address_order_track_ alloc_page(uint32_t order);
    caller has to remember the size of the original allocation.
 */
 
-// Free a page from the given virtual address
+// Free a page from the given page
 void free_page(_address_order_track_ page);
 
-// Reallocate another page with another size
-_address_order_track_ calloc_page(_address_order_track_ page, uint32_t order);
+#endif // DEBUG
+
+#ifdef KERNEL__Vir_MM
+/*
+Virtual memory manager defintion
+*/
+
+#define KERNEL__VM_BASE (virtaddr_t)0x200000
+#define VM__NO_VM_ADDRESS (virtaddr_t)0x0
+
+typedef struct virt_mm {
+    virtaddr_t address;
+    uint32_t size;
+    struct virt_mm* next;
+} __attribute__((packed)) _virt_mm_;
+
+void* kmalloc(uint32_t size);
+void init_vmm();
+void free(virtaddr_t _addr__);
+
+#endif // !Vir_MM
+
 #endif

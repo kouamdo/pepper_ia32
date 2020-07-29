@@ -1,3 +1,6 @@
+#define KERNEL__PAGE_MM
+#define KERNEL__Vir_MM
+
 #include "include/init/gdt.h"
 #include "include/init/idt.h"
 #include "include/init/io.h"
@@ -5,7 +8,6 @@
 #include "include/init/video.h"
 #include "include/lib.h"
 #include "include/mm.h"
-// warning: Source file is more recent than executable.
 
 unsigned int main()
 {
@@ -27,10 +29,11 @@ unsigned int main()
 
     kprintf(2, 11, "\n\n[\t\t\t\t\t\tK:::Load Memory Manager\t\t\t\t\t]\n\n\n");
 
-    init_phymem_manage();
+    init_page_mem_manage();
+
+    init_vmm();
 
     while (1)
-
         ;
 
     return 0;

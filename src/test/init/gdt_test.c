@@ -34,8 +34,8 @@ TEST_UNIT_FUNC(gdt_testing_func__2_)
 {
     __gdt_testing_2_.passed = true;
     asm volatile(
-        "movw $0xFFFFFFFF , %eax \n    \
-    movw %eax , %ds\n");
+        "mov $0xFFFFFFFF , %eax \n    \
+    mov %eax , %ds\n");
     __gdt_testing_2_.passed = false;
 }
 

@@ -1,7 +1,8 @@
 /*
 
-    *   Test memory allocation
+    *   Test page allocation
 */
+#define KERNEL__PAGE_MM
 
 #define TEST_H
 #define TEST_M
@@ -13,50 +14,50 @@
 extern _address_order_track_* _page_area_track_;
 extern uint32_t compteur;
 
-TEST_UNIT_FUNC(phy_mem_test_func__1);
-TEST_UNIT_FUNC(phy_mem_test_func__2);
-TEST_UNIT_FUNC(phy_mem_test_func__3);
-TEST_UNIT_FUNC(phy_mem_test_func__4);
+TEST_UNIT_FUNC(page_mm_test_func__1);
+TEST_UNIT_FUNC(page_mm_test_func__2);
+TEST_UNIT_FUNC(page_mm_test_func__3);
+TEST_UNIT_FUNC(page_mm_test_func__4);
 
-TEST_UNIT(phy_mem_test__1) = {
+TEST_UNIT(page_mm_test__1) = {
 
     true,
     "1 -> Call alloc page for different chunk of page",
     "Call alloc page for different chunk of page and verify the correct "
     "address",
-    &phy_mem_test_func__1,
+    &page_mm_test_func__1,
     NULL,
     NULL};
 
-TEST_UNIT(phy_mem_test__2) = {
+TEST_UNIT(page_mm_test__2) = {
     true,
     "2 -> Make multiple free page",
     "Make sure that multiple free page with the same address doesn't break",
-    &phy_mem_test_func__2,
+    &page_mm_test_func__2,
     NULL,
     NULL};
 
-TEST_UNIT(phy_mem_test__3) = {
+TEST_UNIT(page_mm_test__3) = {
     true,
     "3 -> Allocate all available memory with the same junk size in the loop",
     "Allocate all available memory with the same junk size in the loop Then "
     "free them in random order, make sure there are no errors.",
-    &phy_mem_test_func__3,
+    &page_mm_test_func__3,
     NULL,
     NULL};
 
-TEST_UNIT(phy_mem_test__4) = {
+TEST_UNIT(page_mm_test__4) = {
     true,
     "4 -> Allocate all available memory with random chunk sizes",
     " Allocate all available memory with random chunk sizes, then free",
-    &phy_mem_test_func__4,
+    &page_mm_test_func__4,
     NULL,
     NULL};
 
-TEST_UNIT_FUNC(phy_mem_test_func__1)
+TEST_UNIT_FUNC(page_mm_test_func__1)
 {
     uint32_t i;
-    phy_mem_test__1.passed = true;
+    page_mm_test__1.passed = true;
 
     for (i = 0; i < 0x400; i++)
         alloc_page(i);
@@ -66,17 +67,17 @@ TEST_UNIT_FUNC(phy_mem_test_func__1)
     tmp = _page_area_track_->next_;
 
     while (tmp->next_ != END_LIST) {
-        if (tmp->_address_ == tmp->previous_->_address_ + (tmp->order * PAGE_SIZE)) {
-            phy_mem_test__1.passed = false;
-            break;
+        if (tmp->_address_ != tmp->previous_->_address_ + (tmp->previous_->order * PAGE_SIZE)) {
+            page_mm_test__1.passed = false;
+            return;
         }
         tmp = tmp->next_;
     }
 
-    if (phy_mem_test__1.passed == true)
-        phy_mem_test_func__2();
+    if (page_mm_test__1.passed == true)
+        page_mm_test_func__2();
 }
-TEST_UNIT_FUNC(phy_mem_test_func__2)
+TEST_UNIT_FUNC(page_mm_test_func__2)
 {
     uint32_t i;
 
@@ -84,16 +85,18 @@ TEST_UNIT_FUNC(phy_mem_test_func__2)
         free_page(*_page_area_track_);
 
     if (_page_area_track_->next_ == END_LIST)
-        phy_mem_test__2.passed = true;
+        page_mm_test__2.passed = true;
 
     else
-        phy_mem_test__2.passed = false;
+        page_mm_test__2.passed = false;
 }
 
-TEST_UNIT_FUNC(phy_mem_test_func__3)
+TEST_UNIT_FUNC(page_mm_test_func__3)
 {
-    if (phy_mem_test__2.passed == false || phy_mem_test__1.passed == false)
-        phy_mem_test__3.passed = false;
+    if (page_mm_test__2.passed == false || page_mm_test__1.passed == false) {
+        page_mm_test__3.passed = false;
+        return;
+    }
 
     uint32_t i;
 
@@ -118,14 +121,14 @@ TEST_UNIT_FUNC(phy_mem_test_func__3)
     }
 
     if (_page_area_track_->_address_ == NO_PHYSICAL_ADDRESS)
-        phy_mem_test__3.passed = true;
+        page_mm_test__3.passed = true;
 }
-TEST_UNIT_FUNC(phy_mem_test_func__4)
+TEST_UNIT_FUNC(page_mm_test_func__4)
 {
     uint32_t i, j;
 
     for (i = 1; i < 10; i++) {
-        j = compteur % (i+1);
+        j = compteur % (i + 1);
 
         alloc_page(j);
     }
@@ -135,16 +138,16 @@ TEST_UNIT_FUNC(phy_mem_test_func__4)
     tmp = _page_area_track_->next_;
 
     while (tmp->next_ != END_LIST) {
-        if (tmp->_address_ == tmp->previous_->_address_ + (tmp->order * PAGE_SIZE)) {
-            phy_mem_test__4.passed = false;
-            break;
+        if (tmp->_address_ < tmp->previous_->_address_ + (tmp->previous_->order * PAGE_SIZE)) {
+            page_mm_test__4.passed = false;
+            return;
         }
         tmp = tmp->next_;
     }
 }
 
-TEST_CASE(__phy_mem_manager__) = {true,
+TEST_CASE(__page_mm_manager__) = {true,
                                   "Test physical memory manager",
                                   "Test physical memory manager",
-                                  {&phy_mem_test__1, &phy_mem_test__3, &phy_mem_test__4},
+                                  {&page_mm_test__1, &page_mm_test__3, &page_mm_test__4},
                                   3};

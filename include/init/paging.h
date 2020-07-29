@@ -1,6 +1,7 @@
 #ifndef _PAGING_H_
 #define _PAGING_H_
 
+#include "video.h"
 #define PAGE_DIRECTORY_OFFSET 0x400
 #define PAGE_DIRECTORY_SIZE 0X1000
 
