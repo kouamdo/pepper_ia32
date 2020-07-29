@@ -41,7 +41,7 @@ void* kmalloc(uint32_t size)
     _new_item_ = &MM_BLOCK[i];
 
     // If the base address is free
-    if (_head_vmm_->address != KERNEL__VM_BASE) {
+    if (_head_vmm_->address != KERNEL__VM_BASE + size) {
         _new_item_->address = KERNEL__VM_BASE;
         _new_item_->size = size;
         _new_item_->next = _head_vmm_;
