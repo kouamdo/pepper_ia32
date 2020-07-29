@@ -20,7 +20,7 @@ void init_vmm()
     }
     _head_vmm_ = &MM_BLOCK[0];
 
-    __RUN_TEST__(__vm_mm_manager__);
+    // __RUN_TEST__(__vm_mm_manager__);
 }
 
 void* kmalloc(uint32_t size)
