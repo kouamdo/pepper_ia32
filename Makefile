@@ -32,7 +32,7 @@ OBJECTS_ASM := $(SOURCES_ASM:.asm=.o)
 
 all: boot mixt disk
 	clear
-	qemu-system-i386 -fda disk.img -d cpu_reset -d int -serial file:serial.log
+	qemu-system-i386 -fda disk.img -d cpu_reset -d int file:serial.log
 
 mixt: k_main.o $(OBJECTS) $(OBJECTS_ASM)
 	clear
@@ -43,7 +43,7 @@ mixt: k_main.o $(OBJECTS) $(OBJECTS_ASM)
 	rm $(OBJECTS_ASM)
 
 %.o : %.c
-	@$(CC) -o $@ -c $< $(CFLAGS)
+	@$(CC) -o $@ -c $< $(CFLAGS) $(CINCLUDES)
 
 %.o:%.asm		
 	nasm -felf32 $< -o $@

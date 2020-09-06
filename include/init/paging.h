@@ -2,6 +2,7 @@
 #define _PAGING_H_
 
 #include "video.h"
+#include <stdint.h>
 #define PAGE_DIRECTORY_OFFSET 0x400
 #define PAGE_DIRECTORY_SIZE 0X1000
 
@@ -12,7 +13,7 @@
 
 typedef unsigned long physaddr_t;
 
-typedef unsigned int virtaddr_t;
+typedef uintptr_t virtaddr_t;
 
 #define PAGE_PRESENT(x) (x)      // Page present in table or directory
 #define PAGE_READ_WRITE (1 << 1) // Page read or write in table or directory

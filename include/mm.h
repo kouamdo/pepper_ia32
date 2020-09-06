@@ -11,10 +11,10 @@
 void init_page_mem_manage();
 #define END_LIST ((_address_order_track_*)NULL)
 
-#define KERNEL__PHY_MEM 0X100000
+#define KERNEL__PHY_MEM (virtaddr_t)0X100000
 
 typedef struct _address_order_table_ {
-    physaddr_t _address_;
+    virtaddr_t _address_;
     uint32_t order;
     struct _address_order_table_* previous_;
     struct _address_order_table_* next_;
