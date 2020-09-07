@@ -1,10 +1,8 @@
 #define TEST_H
-#include "../../include/init/idt.h"
-#include "../../include/init/pic.h"
-#include "../../include/init/pit.h"
-#include "../../include/init/video.h"
-#include "../../include/lib.h"
-#include "../../include/test.h"
+#include <init/idt.h>
+#include <init/video.h>
+#include <lib.h>
+#include <test.h>
 
 extern test_case_result __idt_testing__;
 
@@ -23,7 +21,7 @@ static void set_idt(uint16_t selector, uint8_t type, uint64_t offset, uint16_t v
 
 void init_idt()
 {
-    Init_PIT(PIT_0, 0xDAAD);
+    Init_PIT(PIT_0, 0xAD);
     // On itiialise les intérruptions qu'on va utiliser
     PIC_remap(0x20, 0x28);
 

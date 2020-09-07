@@ -11,8 +11,9 @@ static void init_mem_task()
     int i = 0;
 
     while (i < 0x400) {
-        CONTROL_TASKS_MEMORY__section[i].pcb_t = (task_table_t)NULL;
-        CONTROL_TASKS_MEMORY__section[i].next_entry = (task_table_t*)NULL;
+        CONTROL_TASKS_MEMORY__section[i].pcb_t.state_task = Nil;
+        CONTROL_TASKS_MEMORY__section[i].next_entry = (process_control_block_t*)NULL;
+        i++;
     }
 
     CONTROL_TASK = CONTROL_TASKS_MEMORY__section;

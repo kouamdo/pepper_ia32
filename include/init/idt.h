@@ -5,7 +5,9 @@
 #define INTGATE_PRIVILEGE_0 0x8E /* utilise pour gerer les interruptions */
 #define IDTBASE 0x800
 
-#include "../i386types.h"
+#include <i386types.h>
+#include <init/pic.h>
+#include <init/pit.h>
 
 extern /* use IRQ 0 to accurately keep track of
     real time in milliseconds since the PIT was configured .

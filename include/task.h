@@ -1,25 +1,23 @@
 #ifndef _TASK_H_
 
-#include "init/paging.h"
-#include <stdint.h>
-
 #define _TASK_H_
 
+#include <i386types.h>
+
 typedef uint32_t pid_t;
-t
-    /*Create thread data structure*/
-    typedef struct thread {
-} thread_t;
+/*Create thread data structure*/
+// typedef struct thread {
+// } thread_t;
 
 /*Create process data strucuture*/
-typedef struct process {
-} process_t;
+// typedef struct process {
+// } process_t;
 
 /*Create a task (task can be a process or a thread*/
 typedef void* task_t;
 
 // State of task
-enum state_t { running, ready, blocked };
+typedef enum state { running, ready, blocked, Nil } state_t;
 
 /*
     Proces control block
@@ -31,7 +29,7 @@ typedef struct process_control_block {
     task_t* new_tasks; // field that can be used for multiple different linked lists of tasks later on
     state_t state_task;
     pid_t process_id;
-    char task_name[20];
+    char task_name[50];
 } __attribute__((packed)) process_control_block_t;
 
 /*

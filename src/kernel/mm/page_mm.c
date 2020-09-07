@@ -1,12 +1,14 @@
 #define KERNEL__PAGE_MM
-#include "../../../include/i386types.h"
+#include <i386types.h>
 #include <stdint.h>
 #define TEST_H
 #define _TEST_
 
-#include "../../../include/init/video.h"
-#include "../../../include/mm.h"
-#include "../../../include/test.h"
+#include <init/paging.h>
+#include <init/video.h>
+#include <mm.h>
+#include <test.h>
+
 /*
   Memory space to put our nodes (pages)
 */

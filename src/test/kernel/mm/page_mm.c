@@ -7,9 +7,9 @@
 #define TEST_H
 #define TEST_M
 
-#include "../../../../include/mm.h"
-#include "../../../../include/test.h"
+#include <mm.h>
 #include <stddef.h>
+#include <test.h>
 
 extern _address_order_track_* _page_area_track_;
 extern uint32_t compteur;

@@ -1,8 +1,12 @@
-#include "../../include/init/pit.h"
-#include "../../include/init/pic.h"
-#include "../../include/init/video.h"
+#include <init/pic.h>
+#include <init/pit.h>
+#include <init/video.h>
+
+extern int32_t system_timer_fractions, system_timer_ms, IRQ0_fractions, IRQ0_ms,
+    IRQ0_frequency, PIT_reload_value;
 
 uint32_t compteur = 0;
+uint8_t frequency = 0;
 
 void conserv_status_byte()
 {
@@ -13,7 +17,7 @@ void conserv_status_byte()
         Init_PIT(PIT_0, frequency);
 }
 
-void Init_PIT(int8_t channel, uint32_t frequence)
+void Init_PIT(int8_t channel, uint8_t frequence)
 {
     frequency = frequence;
     calculate_frequency();

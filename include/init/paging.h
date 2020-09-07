@@ -1,8 +1,7 @@
 #ifndef _PAGING_H_
 #define _PAGING_H_
 
-#include "video.h"
-#include <stdint.h>
+#include <i386types.h>
 #define PAGE_DIRECTORY_OFFSET 0x400
 #define PAGE_DIRECTORY_SIZE 0X1000
 
@@ -10,10 +9,6 @@
 #define PAGE_TABLE_SIZE 0X1000
 #define NO_PHYSICAL_ADDRESS ((physaddr_t)("NoPhysAddr"))
 #define PAGE_SIZE (uint32_t)(0x1000)
-
-typedef unsigned long physaddr_t;
-
-typedef uintptr_t virtaddr_t;
 
 #define PAGE_PRESENT(x) (x)      // Page present in table or directory
 #define PAGE_READ_WRITE (1 << 1) // Page read or write in table or directory
@@ -32,12 +27,7 @@ typedef uintptr_t virtaddr_t;
 #define PAGE_VALID \
     (PAGE_ACCESSED(1) | PAGE_READ_WRITE | PAGE_PRESENT(1) | PAGE_SUPERVISOR)
 
-#include "../i386types.h"
-
 void create_page_table(uint32_t* page_table, uint8_t index);
-
-uint32_t page_directory[PAGE_DIRECTORY_OFFSET]
-    __attribute__((aligned(PAGE_DIRECTORY_SIZE)));
 
 // Initialiation de la pagination
 void init_paging();
