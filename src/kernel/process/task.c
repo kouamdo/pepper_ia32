@@ -26,6 +26,8 @@ void initialise_multitasking()
 
     intptr_t stack;
 
+    asm("movl %%eax , %%esp" : "=a"(stack));
+
     process_control_block_t first_pcb = {
 
         stack,
