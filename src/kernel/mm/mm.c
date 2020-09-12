@@ -18,7 +18,7 @@ void init_vmm()
         MM_BLOCK[i].next = (_virt_mm_*)NULL;
         MM_BLOCK[i].size = 0;
     }
-    _head_vmm_ = &MM_BLOCK[0];
+    _head_vmm_ = MM_BLOCK;
 
     // __RUN_TEST__(__vm_mm_manager__);
 }

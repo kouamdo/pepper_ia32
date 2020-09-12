@@ -1,41 +1,53 @@
+#define KERNEL__Vir_MM
+#include <i386types.h>
+#include <mm.h>
 #include <stddef.h>
 #include <task.h>
 
-static task_table_t* CONTROL_TASK;
+task_control_block_t CURRENT_TASK;
+uint32_t size_tcb = sizeof(CURRENT_TASK);
+int i = 0;
 
-static task_table_t CONTROL_TASKS_MEMORY__section[0x400];
-
-// Initialise control task memory section
-static void init_mem_task()
+void create_task(task_control_block_t* task, void* test, uint32_t stack, uint32_t size)
 {
-    int i = 0;
+    task->stack_ = stack;
+    task->process_id = 1;
+    task->stack_size = 0xff;
+    task->virt_addr = (virtaddr_t)test;
+    task->state_task = ready;
 
-    while (i < 0x400) {
-        CONTROL_TASKS_MEMORY__section[i].pcb_t.state_task = Nil;
-        CONTROL_TASKS_MEMORY__section[i].next_entry = (process_control_block_t*)NULL;
-        i++;
-    }
+    CURRENT_TASK.new_tasks = task;
+}
 
-    CONTROL_TASK = CONTROL_TASKS_MEMORY__section;
+void* test()
+{
+    i++;
 }
 
 void initialise_multitasking()
 {
-    // init memory , because the table use linked list data structure
-    init_mem_task();
+    uint32_t esp = 0;
+    esp = (uint32_t)kmalloc(0xff);
+    task_control_block_t firts_tcb, *new_task;
 
-    intptr_t stack;
+    firts_tcb.stack_size = 1024;
+    firts_tcb.stack_ = esp + firts_tcb.stack_size;
 
-    asm("movl %%eax , %%esp" : "=a"(stack));
+    firts_tcb.virt_addr = (virtaddr_t)initialise_multitasking;
+    firts_tcb.new_tasks = running;
+    firts_tcb.process_id = 0;
 
-    process_control_block_t first_pcb = {
+    CURRENT_TASK = firts_tcb;
 
-        stack,
-        (virtaddr_t)initialise_multitasking,
-        (task_t*)NULL,
-        running,
-        0,
-        "initialise_multitasking"};
+    create_task(new_task, test, (uint32_t)kmalloc(0xff), 22);
 
-    CONTROL_TASK->pcb_t = first_pcb;
+    switch_to_task();
 }
+
+/*
+
+    Next write a function t create a new kernel task
+
+    and put values on the new kernel stack to match the values that your "switch_to_task(task)"
+    function expects to pop off the stack after switching to the task
+*/
