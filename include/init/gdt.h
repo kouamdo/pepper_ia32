@@ -96,6 +96,15 @@ Size bit. If 0 the selector defines 16 bit protected mode. If 1 it defines 32 bi
     DATA_READ_WRITE_EXPAND_DOWN | SEG_PRESENT(1) | SEG_PRIVILEGE(0) | \
         SEG_DESCRIPTOR_TYPE(1)
 
+/*
+    The base, limit, and DPL fields and the granularity and
+    present flags have functions similar to their use in data-segment descriptors
+*/
+
+#define TSS_PRIVILEGE_0                                              \
+    CODE_EXECUTE_ONLY_ACCESSED | SEG_PRIVILEGE(0) | SEG_PRESENT(1) | \
+        SEG_DESCRIPTOR_TYPE(0)
+
 /* Descripteur de segment */
 typedef struct gdtdesc {
     uint16_t lim0_15;

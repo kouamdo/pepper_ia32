@@ -48,6 +48,9 @@ mixt: k_main.o $(OBJECTS) $(OBJECTS_ASM)
 %.o:%.asm		
 	nasm -felf32 $< -o $@
 
+%.o:%.S		
+	nasm -felf32 $< -o $@
+
 boot:
 	nasm -g -f elf32 -F dwarf -o $(BIN)/boot.o BOOT/bootloader.asm
 	ld -melf_i386 -Ttext=0x7c00 -nostdlib --nmagic -o $(BIN)/boot.elf $(BIN)/boot.o

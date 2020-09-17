@@ -7,6 +7,7 @@
 #include <init/paging.h>
 #include <init/video.h>
 #include <mm.h>
+#include <string.h>
 #include <test.h>
 
 /*
@@ -58,13 +59,15 @@ void init_page_mem_manage()
     // __RUN_TEST__(__phy_mem_manager__);
 }
 
-_address_order_track_ alloc_page(uint32_t order)
+physaddr_t alloc_page(uint32_t order)
 {
     // Insert at the head
     if (_page_area_track_->_address_ == NO_PHYSICAL_ADDRESS) {
         _page_area_track_->_address_ = KERNEL__PHY_MEM;
         _page_area_track_->order = order;
-        return *_page_area_track_;
+        memset((void*)(*_page_area_track_)._address_, 0, order * 0x1000);
+
+        return (*_page_area_track_)._address_;
     }
 
     // FInd the free address space
@@ -84,7 +87,8 @@ _address_order_track_ alloc_page(uint32_t order)
         new_page->next_ = _page_area_track_;
         _page_area_track_ = new_page;
 
-        return *new_page;
+        memset((void*)(*new_page)._address_, 0, order * 0x1000);
+        return (*new_page)._address_;
     }
 
     _address_order_track_* tmp;
@@ -108,7 +112,8 @@ _address_order_track_ alloc_page(uint32_t order)
 
         tmp->next_ = new_page;
 
-        return *new_page;
+        memset((void*)(*new_page)._address_, 0, order * 0x1000);
+        return (*new_page)._address_;
     }
 
     else {
@@ -120,7 +125,8 @@ _address_order_track_ alloc_page(uint32_t order)
         tmp->next_ = new_page;
         tmp->next_->previous_ = new_page;
 
-        return *new_page;
+        memset((void*)(*new_page)._address_, 0, order * 0x1000);
+        return (*new_page)._address_;
     }
     NMBER_PAGES_ALLOC++;
 }

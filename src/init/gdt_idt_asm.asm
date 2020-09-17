@@ -19,6 +19,9 @@ load_gdt:
 		mov word [gdtr] , ax
 		
 		lgdt [gdtr]
+		mov ecx , dword [gdtr+2]
+		add ecx , 0x20
+		ltr cx
 	pop ecx
 	pop eax
 	ret

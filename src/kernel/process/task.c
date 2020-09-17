@@ -1,53 +1,71 @@
+/*
+    describes the IA-32 architecture’s task management facilities.
+     These facilities are only available when the processor is running in protected mode.
+*/
+
 #define KERNEL__Vir_MM
+#define KERNEL__PAGE_MM
 #include <i386types.h>
+#include <init/video.h>
 #include <mm.h>
 #include <stddef.h>
 #include <task.h>
 
-task_control_block_t CURRENT_TASK;
-uint32_t size_tcb = sizeof(CURRENT_TASK);
-int i = 0;
+static task_control_block_t main_task, *running_task, otherTask;
 
-void create_task(task_control_block_t* task, void* test, uint32_t stack, uint32_t size)
+void yield()
 {
-    task->stack_ = stack;
-    task->process_id = 1;
-    task->stack_size = 0xff;
-    task->virt_addr = (virtaddr_t)test;
-    task->state_task = ready;
+    task_control_block_t* last = running_task;
+    running_task = running_task->new_tasks;
 
-    CURRENT_TASK.new_tasks = task;
+    switch_to_task(&last->regs, &running_task->regs);
 }
 
-void* test()
+static void otherMain()
 {
-    i++;
+    kprintf(2, 11, "switch\n");
+}
+void init_multitasking()
+{
+    // Get EFLAGS and cr3
+
+    asm volatile(
+        "movl %%cr3, %%eax;"
+        "movl %%eax, %0;"
+        : "=m"(main_task.regs.cr3)::"%eax");
+
+    asm volatile(
+        "pushfl;"
+        "pop %%eax;"
+        "movl %%eax , %0;"
+        : "=m"(main_task.regs.eflags)::"%eax");
+
+    create_task(&otherTask, otherMain, main_task.regs.eflags, main_task.regs.cr3);
+
+    main_task.new_tasks = &otherTask;
+    otherTask.new_tasks = &main_task;
+
+    running_task = &main_task;
 }
 
-void initialise_multitasking()
+void create_task(task_control_block_t* task, void (*task_func)(), uint32_t eflags, uint32_t cr3)
 {
-    uint32_t esp = 0;
-    esp = (uint32_t)kmalloc(0xff);
-    task_control_block_t firts_tcb, *new_task;
+    task->regs.eax = 0;
+    task->regs.ebx = 0;
+    task->regs.ecx = 0;
+    task->regs.edx = 0;
+    task->regs.esi = 0;
+    task->regs.edi = 0;
 
-    firts_tcb.stack_size = 1024;
-    firts_tcb.stack_ = esp + firts_tcb.stack_size;
-
-    firts_tcb.virt_addr = (virtaddr_t)initialise_multitasking;
-    firts_tcb.new_tasks = running;
-    firts_tcb.process_id = 0;
-
-    CURRENT_TASK = firts_tcb;
-
-    create_task(new_task, test, (uint32_t)kmalloc(0xff), 22);
-
-    switch_to_task();
+    task->regs.eflags = eflags;
+    task->regs.eip = (uint32_t)task_func;
+    task->regs.cr3 = (uint32_t)cr3;
+    task->regs.esp = (uint32_t)alloc_page(2);
+    task->new_tasks = 0;
 }
-
-/*
-
-    Next write a function t create a new kernel task
-
-    and put values on the new kernel stack to match the values that your "switch_to_task(task)"
-    function expects to pop off the stack after switching to the task
-*/
+void doIt()
+{
+    kprintf(2, 11, "Switching to otherTask... \n");
+    yield();
+    kprintf(2, 11, "Returned to mainTask!\n");
+}

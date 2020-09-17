@@ -1,45 +1,74 @@
-global switch_to_task
-
-extern  set_tcb,CURRENT_TASK , memcpy , sizeof
-extern size_tcb
+global switch_to_task ,current_task_tcb 
 
 section .text
 
-
-	;In C declaration , : switch_to_task(task_control_block_t current_task)
 	switch_to_task:
+		;save entire task state , so last regs should be field------
+		push eax
+			mov eax , dword[esp+8]
+			mov dword[eax+4] , ebx
+			mov dword[eax+8] , ecx
+			mov dword[eax+12], edx
+			mov dword[eax+16] , esi
+			mov dword[eax+20] , edi
+			mov dword[eax+24] , esp
+			mov dword[eax+28] , ebp
+			
+			;save eip
+			push ecx
+				mov ecx , dword[esp+8]
+				mov dword[eax+32] , ecx
+			pop ecx
+
+			;save eflags
+			push ecx
+				pushfd
+				pop ecx
+				mov dword[eax+36] , ecx
+			pop ecx
+
+			;save cr3
+			push ecx
+				mov ecx , cr3
+				mov dword[eax+40] , ecx
+			pop ecx
+
+			;save eax
+			push ecx
+				mov ecx , dword[esp+4]
+				mov dword[eax] , ecx
+			pop ecx
+
+		pop eax
 		
-		;save previous task's state
-		push ebx
-		push esi
-		push edi
-		push ebp
-
-		mov edi ,CURRENT_TASK	;address of the current task
-		mov dword[edi] , esp	;Save ESP for previous task's in the current stask's task
-
-		;load next task's state
-		mov esi , dword [CURRENT_TASK+12]	;address of the next TCB
 		
-		;copy memmory of current_task.................
-			push dword [size_tcb]
-			push esi
-			push CURRENT_TASK
-			call memcpy
-			pop eax
-			pop eax
-			pop eax
-	; 	;end of the copy..............................
-	
-		mov esp , dword [CURRENT_TASK] ;load esp next task's in esp
-		mov eax , dword [CURRENT_TASK+8];address of page directory
-		mov ebx , dword [CURRENT_TASK+4];top of the stack's task
-		mov ecx , cr3
-		cmp ecx , eax
-		je .allows
+		;---------------------------------------------------------
 
-	.allows:
-		pop ebp
-		pop edi
-		pop esi
-		pop ebx
+		; load task state ----------------------------------------
+		
+			mov eax , dword[esp+8]
+			mov ebx , dword[eax+4]
+			mov ecx , dword[eax+8]
+			mov edx , dword[eax+12]
+			mov esi , dword[eax+16]
+			mov edi , dword[eax+20]
+			mov esp , dword[eax+24]
+			mov ebp , dword[eax+28]
+
+			;load eflags
+			push ecx
+				mov ecx , dword[eax+36]
+				push ecx
+				popfd
+			pop ecx
+
+			;load cr3
+			push ecx
+				mov ecx , dword[eax+40]
+				mov cr3 , ecx
+			pop ecx
+		
+		mov eax , dword[eax+32]
+		mov dword[esp] , eax
+		;--------------------------------------------------------
+		ret

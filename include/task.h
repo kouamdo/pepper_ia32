@@ -3,24 +3,21 @@
 #define _TASK_H_
 
 #include <i386types.h>
+#include <init/gdt.h>
 
 typedef uint32_t pid_t;
 
 // State of task
 typedef enum state { running, ready, blocked, Nil } state_t;
 
-/*
-    Task control block
-    data structure that will keep track of a task's information
-*/
+typedef struct registers {
+    uint32_t eax, ebx, ecx, edx, esi, edi, esp, ebp, eip, eflags, cr3;
+} __attribute__((packed)) registers_t;
+
 typedef struct task_control_block {
-    uint32_t stack_;      // a field for the task's kernel stack top
-    uint32_t stack_size;  // EBP
-    virtaddr_t virt_addr; // a field for the task's virtual address space
+    registers_t regs;
     struct task_control_block* new_tasks; // field that can be used for multiple different linked lists of tasks later on
-    state_t state_task;
-    pid_t process_id;
-    char task_name[10];
+
 } __attribute__((packed)) task_control_block_t;
 
 /*
@@ -32,14 +29,6 @@ typedef struct task_table {
     task_control_block_t pcb_t;
     task_control_block_t* next_entry;
 } __attribute__((packed)) task_table_t;
-/*
-    Create multitasking initialisation function
-    create it to conserve task information in PCB
-*/
-
-/*
-    task states
-*/
 
 // task actually using by CPU
 void task_running(task_control_block_t task_);
@@ -66,6 +55,8 @@ void ready_running(task_control_block_t task_);
 // input becomes available
 void blocked_ready(task_control_block_t task_);
 
-extern void switch_to_task();
-void initialise_multitasking();
+extern void switch_to_task(registers_t*, registers_t*);
+void init_multitasking();
+void create_task(task_control_block_t*, void (*)(), uint32_t, uint32_t);
+void yeild();
 #endif // !_TASK_H_

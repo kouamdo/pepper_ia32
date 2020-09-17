@@ -20,7 +20,7 @@ typedef struct _address_order_table_ {
     struct _address_order_table_* next_;
 } __attribute__((packed)) _address_order_track_;
 
-_address_order_track_ alloc_page(uint32_t order);
+physaddr_t alloc_page(uint32_t order);
 
 /*
     Free pages,

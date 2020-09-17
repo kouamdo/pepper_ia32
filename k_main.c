@@ -10,7 +10,9 @@
 #include <mm.h>
 #include <task.h>
 
-unsigned int main()
+extern void doIt();
+
+void main()
 {
     CLEAR_BSS_SECTION;
 
@@ -34,10 +36,10 @@ unsigned int main()
 
     init_vmm();
 
-    initialise_multitasking();
+    init_multitasking();
+
+    doIt();
 
     while (1)
         ;
-
-    return 0;
 }
