@@ -3,8 +3,13 @@
 #define TEST_H
 #define _TEST_
 
-#include "../../../include/mm.h"
-#include "../../../include/test.h"
+#include <mm.h>
+#include <string.h>
+#include <test.h>
+
+static char VMM_ZONE[4024];
+
+#define KERNEL__VM_BASE (virtaddr_t) VMM_ZONE
 
 _virt_mm_ MM_BLOCK[0x1000], *_head_vmm_;
 extern test_case_result __vm_mm_manager__;
@@ -29,6 +34,8 @@ void* kmalloc(uint32_t size)
     if (_head_vmm_->address == VM__NO_VM_ADDRESS) {
         _head_vmm_->address = KERNEL__VM_BASE;
         _head_vmm_->size = size;
+        memset((void*)KERNEL__VM_BASE, 0, size);
+
         return (void*)KERNEL__VM_BASE;
     }
 
@@ -47,6 +54,9 @@ void* kmalloc(uint32_t size)
         _new_item_->next = _head_vmm_;
 
         _head_vmm_ = _new_item_;
+
+        memset((void*)_new_item_->address, 0, size);
+
         return (void*)_new_item_->address;
     }
 
@@ -67,6 +77,8 @@ void* kmalloc(uint32_t size)
 
         tmp->next = _new_item_;
 
+        memset((void*)_new_item_->address, 0, size);
+
         return (void*)_new_item_->address;
     }
 
@@ -76,6 +88,8 @@ void* kmalloc(uint32_t size)
 
         _new_item_->next = tmp->next;
         tmp->next = _new_item_;
+
+        memset((void*)_new_item_->address, 0, size);
 
         return (void*)_new_item_->address;
     }

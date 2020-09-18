@@ -39,7 +39,6 @@ void free_page(_address_order_track_ page);
 Virtual memory manager defintion
 */
 
-#define KERNEL__VM_BASE (virtaddr_t)0x200000
 #define VM__NO_VM_ADDRESS (virtaddr_t)0x0
 
 typedef struct virt_mm {

@@ -1,4 +1,4 @@
-global switch_to_task ,current_task_tcb 
+global switch_to_task ,current_task_tcb
 
 section .text
 
@@ -69,6 +69,7 @@ section .text
 			pop ecx
 		
 		mov eax , dword[eax+32]
-		mov dword[esp] , eax
+		mov [esp] , eax
+		
 		;--------------------------------------------------------
 		ret

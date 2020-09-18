@@ -23,7 +23,8 @@ void yield()
 
 static void otherMain()
 {
-    kprintf(2, 11, "switch\n");
+    kprintf(2, 11, "Switching ok\n");
+    yield();
 }
 void init_multitasking()
 {
@@ -42,8 +43,12 @@ void init_multitasking()
 
     create_task(&otherTask, otherMain, main_task.regs.eflags, main_task.regs.cr3);
 
+    // We will call another task and come back to the main task
+
     main_task.new_tasks = &otherTask;
     otherTask.new_tasks = &main_task;
+
+    // ----------------------------------------------------
 
     running_task = &main_task;
 }
@@ -60,7 +65,7 @@ void create_task(task_control_block_t* task, void (*task_func)(), uint32_t eflag
     task->regs.eflags = eflags;
     task->regs.eip = (uint32_t)task_func;
     task->regs.cr3 = (uint32_t)cr3;
-    task->regs.esp = (uint32_t)alloc_page(2);
+    task->regs.esp = (uint32_t)kmalloc(200);
     task->new_tasks = 0;
 }
 void doIt()
