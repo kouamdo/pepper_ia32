@@ -11,21 +11,21 @@
 #include <stddef.h>
 #include <task.h>
 
-static task_control_block_t main_task, *running_task, otherTask;
+sheduler_t sheduler;
 
-void yield()
+static task_control_block_t main_task;
+
+void __switch()
 {
-    task_control_block_t* last = running_task;
-    running_task = running_task->new_tasks;
+    task_control_block_t* prev_task;
 
-    switch_to_task(&last->regs, &running_task->regs);
+    prev_task = sheduler.running_task;
+
+    sheduler.running_task = prev_task->new_tasks;
+
+    switch_to_task(&(prev_task->regs), &(sheduler.running_task->regs));
 }
 
-static void otherMain()
-{
-    kprintf(2, 11, "Switching ok\n");
-    yield();
-}
 void init_multitasking()
 {
     // Get EFLAGS and cr3
@@ -41,16 +41,14 @@ void init_multitasking()
         "movl %%eax , %0;"
         : "=m"(main_task.regs.eflags)::"%eax");
 
-    create_task(&otherTask, otherMain, main_task.regs.eflags, main_task.regs.cr3);
+    main_task.new_tasks = (task_control_block_t*)NULL;
 
-    // We will call another task and come back to the main task
+    main_task.new_tasks = (task_control_block_t*)NULL;
 
-    main_task.new_tasks = &otherTask;
-    otherTask.new_tasks = &main_task;
+    sheduler.init_timer = 1;
+    sheduler.task_timer = DELAY_PER_TASK;
 
-    // ----------------------------------------------------
-
-    running_task = &main_task;
+    __switch();
 }
 
 void create_task(task_control_block_t* task, void (*task_func)(), uint32_t eflags, uint32_t cr3)
@@ -67,10 +65,4 @@ void create_task(task_control_block_t* task, void (*task_func)(), uint32_t eflag
     task->regs.cr3 = (uint32_t)cr3;
     task->regs.esp = (uint32_t)kmalloc(200);
     task->new_tasks = 0;
-}
-void doIt()
-{
-    kprintf(2, 11, "Switching to otherTask... \n");
-    yield();
-    kprintf(2, 11, "Returned to mainTask!\n");
 }

@@ -38,8 +38,6 @@ void main()
 
     init_multitasking();
 
-    doIt();
-
     while (1)
         ;
 }

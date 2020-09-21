@@ -1,9 +1,12 @@
 #include <init/pic.h>
 #include <init/pit.h>
 #include <init/video.h>
+#include <task.h>
 
 extern int32_t system_timer_fractions, system_timer_ms, IRQ0_fractions, IRQ0_ms,
     IRQ0_frequency, PIT_reload_value;
+
+extern sheduler_t sheduler;
 
 uint32_t compteur = 0;
 uint8_t frequency = 0;
@@ -15,6 +18,18 @@ void conserv_status_byte()
     print_frequence(compteur % IRQ0_frequency);
     if (status != 0x34)
         Init_PIT(PIT_0, frequency);
+}
+
+void sheduler_cpu_timer()
+{
+    if (sheduler.init_timer == 1) {
+        if (sheduler.task_timer == 0) {
+            sheduler.task_timer = DELAY_PER_TASK;
+            __switch();
+        }
+        else
+            sheduler.task_timer--;
+    }
 }
 
 void Init_PIT(int8_t channel, uint8_t frequence)

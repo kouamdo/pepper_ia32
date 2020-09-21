@@ -6,7 +6,7 @@
 #include <init/gdt.h>
 
 typedef uint32_t pid_t;
-
+#define DELAY_PER_TASK 100
 // State of task
 typedef enum state { running, ready, blocked, Nil } state_t;
 
@@ -16,19 +16,21 @@ typedef struct registers {
 
 typedef struct task_control_block {
     registers_t regs;
+    state_t state_task;
+    pid_t pid;
     struct task_control_block* new_tasks; // field that can be used for multiple different linked lists of tasks later on
 
 } __attribute__((packed)) task_control_block_t;
 
-/*
+// Sheduler and sheduling algorithm
+typedef struct sheduler {
+    uint8_t init_timer;
+    uint32_t task_timer;
+    task_control_block_t* running_task;
+} sheduler_t;
 
-    to implementing task model , kernel maintins table called
-    task_table with one entry per process
-*/
-typedef struct task_table {
-    task_control_block_t pcb_t;
-    task_control_block_t* next_entry;
-} __attribute__((packed)) task_table_t;
+// Prepare and switch to another task
+void __switch();
 
 // task actually using by CPU
 void task_running(task_control_block_t task_);

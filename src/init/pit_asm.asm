@@ -1,7 +1,7 @@
 global irq_PIT , calculate_frequency, PIT_reload_value 
 global IRQ0_frequency , IRQ0_fractions , PIT_handler
 
-extern PIC_sendEOI , frequency , conserv_status_byte
+extern PIC_sendEOI , frequency , conserv_status_byte , sheduler_cpu_timer
 
 section .bss
 
@@ -17,6 +17,7 @@ section .text
 PIT_handler:
    pushad
   		call irq_PIT
+        call sheduler_cpu_timer
    popad
 	iret
 

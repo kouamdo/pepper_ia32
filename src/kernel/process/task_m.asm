@@ -1,4 +1,4 @@
-global switch_to_task ,current_task_tcb
+global switch_to_task
 
 section .text
 
