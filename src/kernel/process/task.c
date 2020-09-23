@@ -21,7 +21,7 @@ void __switch()
 
     prev_task = sheduler.running_task;
 
-    sheduler.running_task = prev_task->new_tasks;
+    sheduler.running_task = sheduler.running_task->new_tasks;
 
     switch_to_task(&(prev_task->regs), &(sheduler.running_task->regs));
 }
@@ -41,14 +41,11 @@ void init_multitasking()
         "movl %%eax , %0;"
         : "=m"(main_task.regs.eflags)::"%eax");
 
-    main_task.new_tasks = (task_control_block_t*)NULL;
+    main_task.new_tasks = &main_task;
 
-    main_task.new_tasks = (task_control_block_t*)NULL;
-
+    sheduler.running_task = &main_task;
     sheduler.init_timer = 1;
     sheduler.task_timer = DELAY_PER_TASK;
-
-    __switch();
 }
 
 void create_task(task_control_block_t* task, void (*task_func)(), uint32_t eflags, uint32_t cr3)

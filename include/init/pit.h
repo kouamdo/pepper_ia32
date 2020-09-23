@@ -24,18 +24,75 @@
     The read back command is a special
      command sent to the mode/command register (I/O port 0x43).
 */
+//--------------------------------------------------------------------
+// Read back timer channel 0 (1 = yes, 0 = no)
+#define READ_BACK_TIMER_0(x) ((x) << 0x1)
 
-#define READ_BACK_TIMER_0(x) \
-    ((x) << 0x1) // Read back timer channel 0 (1 = yes, 0 = no)
-#define READ_BACK_TIMER_1(x) \
-    ((x) << 0x2) // Read back timer channel 1 (1 = yes, 0 = no)
-#define READ_BACK_TIMER_2(x) \
-    ((x) << 0x3) // Read back timer channel 2 (1 = yes, 0 = no)
-#define LATCH_STATUS_FLAG(x) \
-    ((x) << 0x4) // Latch status flag (0 = latch status, 1 = don't latch status)
-#define LATCH_COUNT_FLAG(x) \
-    ((x) << 0x5) // Latch count flag (0 = latch count, 1 = don't latch count)
-#define READ_BACK_COMMAND 0xC0 // Must be set for the read back command
+// Read back timer channel 1 (1 = yes, 0 = no)
+#define READ_BACK_TIMER_1(x) ((x) << 0x2)
+
+// Read back timer channel 2 (1 = yes, 0 = no)
+#define READ_BACK_TIMER_2(x) ((x) << 0x3)
+
+// Latch status flag (0 = latch status, 1 = don't latch status)
+#define LATCH_STATUS_FLAG(x) ((x) << 0x4)
+
+// Latch count flag (0 = latch count, 1 = don't latch count)
+#define LATCH_COUNT_FLAG(x) ((x) << 0x5)
+
+//----------------------------------------------------------------------
+
+/*
+    Read Back status byte
+    After sending a read back command with bit 4 clear, reading
+    the data port for each selected channel will return a status value
+*/
+//---------------------------------------------------------------------------
+
+// 0 = 16-bit binary, 1 = four-digit BCD
+#define BCD_BINARY_MODE(x) x
+
+/*
+    Operating mode :
+                0 = Mode 0 (interrupt on terminal count)
+                1 = Mode 1 (hardware re-triggerable one-shot)
+                2 = Mode 2 (rate generator)
+                3 = Mode 3 (square wave generator)
+                4 = Mode 4 (software triggered strobe)
+                5 = Mode 5 (hardware triggered strobe)
+                6 = Mode 2 (rate generator, same as 010b)
+                7 = Mode 3 (square wave generator, same as 011b)
+*/
+#define OPERATING_MODE(x) (x << 1)
+
+/*
+     Access mode :
+                0 = Latch count value command
+                1 = Access mode: lobyte only
+                2 = Access mode: hibyte only
+                3 = Access mode: lobyte/hibyte
+*/
+#define ACCESS_MODE(x) (x << 4)
+
+// Usage:Nul count flag
+#define NULL_COUNT_FLAG(x) (x << 6)
+
+// Usage:Output pin state
+#define OUTPUT_PIN_STATE(x) (x << 7)
+
+// Select channel 0
+#define CHANNEL_0 0
+
+// Select channel 1
+#define CHANNEL_1 1
+
+// Select channel 2
+#define CHANNEL_2 2
+
+// Select read back command
+#define READ_BACK_COMMAND 0xC0
+
+//---------------------------------------------------------------------------
 
 // Pour connaître le statut d'une seule chaine
 // On pourra déterminer le statut d'un channel avant de configurer le channel
@@ -45,7 +102,7 @@ int8_t read_back_channel(int8_t channel);
 // Programmer une chaine PIT
 // Prenant en parametre un compteur
 
-void PIT_channel(int8_t counter), Init_PIT(int8_t channel, uint8_t _frequency);
+void PIT_channel(int8_t counter), Init_PIT(uint16_t _frequency);
 
 extern void irq_PIT(), calculate_frequency();
 

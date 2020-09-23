@@ -6,7 +6,7 @@
 #include <init/gdt.h>
 
 typedef uint32_t pid_t;
-#define DELAY_PER_TASK 100
+#define DELAY_PER_TASK 1000
 // State of task
 typedef enum state { running, ready, blocked, Nil } state_t;
 

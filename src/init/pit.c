@@ -10,14 +10,23 @@ extern sheduler_t sheduler;
 
 uint32_t compteur = 0;
 uint8_t frequency = 0;
+uint8_t status_PIT = 0;
 
 void conserv_status_byte()
 {
-    uint8_t status = read_back_channel(PIT_0);
-    compteur++;
-    print_frequence(compteur % IRQ0_frequency);
-    if (status != 0x34)
-        Init_PIT(PIT_0, frequency);
+    status_PIT = read_back_channel(PIT_0);
+
+    if (status_PIT == (OPERATING_MODE(2) | BCD_BINARY_MODE(0) | ACCESS_MODE(3) |
+                       NULL_COUNT_FLAG(0) | OUTPUT_PIN_STATE(0))) {
+        compteur++;
+        print_frequence(system_timer_ms);
+    }
+
+    else {
+        pit_send_command(BCD_BINARY_MODE(0) | OPERATING_MODE(2) | ACCESS_MODE(3) | CHANNEL_0);
+
+        set_pit_count(PIT_0, PIT_reload_value);
+    }
 }
 
 void sheduler_cpu_timer()
@@ -32,14 +41,31 @@ void sheduler_cpu_timer()
     }
 }
 
-void Init_PIT(int8_t channel, uint8_t frequence)
+void Init_PIT(uint16_t frequence)
 {
+    /*
+       We should program the PIT channel
+
+       -calibrate the good frequency
+
+       -disable interrupt
+
+       -send Mode or command register  to select which channel will be configured
+
+       -send data to a good channel
+
+       */
     frequency = frequence;
     calculate_frequency();
-    pit_send_command(0b00110100 | (channel << 6));
-    /* Reuint8_tger la valeur du compteur*/
-    set_pit_count(channel, PIT_reload_value);
+
+    cli;
+
+    pit_send_command(BCD_BINARY_MODE(0) | OPERATING_MODE(2) | ACCESS_MODE(3) | CHANNEL_0);
+
+    set_pit_count(PIT_0, PIT_reload_value);
 }
+
+// We should send command before read PIT channel
 
 int8_t read_back_channel(int8_t channel)
 {

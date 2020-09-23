@@ -1,5 +1,5 @@
 global irq_PIT , calculate_frequency, PIT_reload_value 
-global IRQ0_frequency , IRQ0_fractions , PIT_handler
+global IRQ0_frequency , IRQ0_fractions , PIT_handler , system_timer_ms
 
 extern PIC_sendEOI , frequency , conserv_status_byte , sheduler_cpu_timer
 
@@ -15,23 +15,33 @@ PIT_reload_value:        resw 1          ; Current PIT reload value
 
 section .text
 PIT_handler:
+   push 0
+   call PIC_sendEOI
+   pop eax
+   
    pushad
-  		call irq_PIT
-        call sheduler_cpu_timer
+      call irq_PIT
+      call conserv_status_byte
+      call sheduler_cpu_timer   
    popad
+
+   nop
+   nop
+   nop
+   nop
+   nop
+   nop
+   nop
+   nop
+   nop
+   nop
 	iret
 
 irq_PIT:
-       call conserv_status_byte
-
         mov eax ,dword [IRQ0_fractions]
         mov ebx ,dword [IRQ0_ms]  ;eax.ebx = amount of time between IRQs
         add dword [system_timer_fractions] , eax  ;Update system timer ticks fractions
-        adc dword [system_timer_ms] , ebx ;Update system timer ticks multi-seconde 
-
-        push dword 0
-        call PIC_sendEOI
-         pop eax
+        adc dword [system_timer_ms] , ebx ;Update system timer ticks multi-seconde   
     ret
 
 ;Initialize PIT
